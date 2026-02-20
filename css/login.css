@@ -1,0 +1,32 @@
+body {
+        min-height: 100vh;
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        background: linear-gradient(135deg, #cfe0ff 0%, #ffffff 100%);
+    }
+
+
+
+.login-box {
+        display: flex;
+        background: #ffffff;
+        border-radius: 16px;
+        box-shadow: 0 10px 25px rgba(0,0,0,0.1);
+        overflow: hidden;
+        width: 900px;
+        max-width: 90%;
+    }
+
+#registro{
+    background-color: #ffffff;
+    padding: 20px;
+    width: 40%;
+    align-items: end;
+    border-radius: 20px;
+}
+
+.user{
+    padding: 10px;
+    border-radius: 10px;
+}
