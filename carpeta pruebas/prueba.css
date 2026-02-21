@@ -1,0 +1,9 @@
+@font-face {
+  font-family: myFont;
+  src: url(sansation_bold.woff);
+  font-weight: bold;
+}
+
+p{
+  font-family: myFont;
+}
