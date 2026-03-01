@@ -7,11 +7,15 @@ function registro()
     let repeticion_contraseña = document.getElementById('rep-pass').value
 
     //validacion basica correo
-    if (!correo.includes("@"))
+    if ((!correo.includes("@")) || (correo === ""))
     {
-        alert("No se ha introducido un correo correcto")
+        alert("Valor del correo electronico incorrecto")
         return
     } //validacion contraseña y su repeticion
+    else if (contraseña == "")
+    {
+        alert("Contraseña no valida")
+    }
     else if (repeticion_contraseña != contraseña)
     {
         alert("La repeticion de la contraseña no coincide")
