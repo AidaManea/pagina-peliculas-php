@@ -11,5 +11,4 @@ echo "Conexión exitosa";
 } catch(PDOException $e) {
   echo "Error de conexión: " . $e->getMessage();
 }
-
 ?>
