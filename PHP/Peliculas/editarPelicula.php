@@ -1,5 +1,5 @@
 <?php
-require('db.php');
+require('Conexiondb.php');
 
 try {
   $conn = new PDO("mysql:host=$servername;dbname=$dbname", $username, $password);
@@ -20,7 +20,7 @@ try {
   $stmt->bindParam(':id', $_POST['id']);
   // use exec() because no results are returned
   $stmt->execute();
-  header("Location: .php");//lanzar un mensaje de confirmacion en javaSrcipt
+  header("Location:/html/index.html");//lanzar un mensaje de confirmacion en javaSrcipt
 
 
 echo "Conexión exitosa";

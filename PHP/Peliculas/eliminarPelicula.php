@@ -1,4 +1,5 @@
 <?php
+
 require('db.php');
 
 try {
@@ -7,9 +8,19 @@ try {
   $conn->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION);
 
 
-echo "Conexión exitosa";
+  //aquí empieza el insert 
+  $stmt = $conn->prepare("DELETE FROM pelicula WHERE `pelicula`.`idpelis` = :idpelis");
+  $stmt->bindParam(':id', $_GET['id']);
+  
+
+  // use exec() because no results are returned
+  $stmt->execute();
+  header("Location: Añadir.php");
+
 } catch(PDOException $e) {
-  echo "Error de conexión: " . $e->getMessage();
+  echo $sql . "<br>" . $e->getMessage();
 }
 
-?>
+$conn = null;
+
+
