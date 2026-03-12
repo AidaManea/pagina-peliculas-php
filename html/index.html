@@ -1,36 +1,155 @@
- <!DOCTYPE html>
-<html>
+<!DOCTYPE html>
+<html lang="es">
+
 <head>
-    <meta charset='utf-8'>
-    <meta http-equiv='X-UA-Compatible' content='IE=edge'>
-    <title>Page Title</title>
-    <meta name='viewport' content='width=device-width, initial-scale=1'>
-    <link rel='stylesheet' type='text/css' media='screen' href='../css/index.css'>
-    <script src='main.js'></script>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <meta name="description" content="Filmora – Organiza y descubre tus películas favoritas.">
+    <title>Filmora - Inicio</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;500;600;700;800&display=swap"
+        rel="stylesheet">
+    <!-- Bootstrap 5 -->
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <!-- Estilos propios -->
+    <link rel="stylesheet" type="text/css" media="screen" href="../css/index.css">
 </head>
+
 <body>
     <header>
         <nav>
-            <img src="../assets/filmora-logo.png" alt="logo no encontrado">
-
+            <a href="index.html">
+                <img src="../assets/filmora-logo.png" alt="Filmora">
+            </a>
+            <h2>Filmora</h2>
             <div class="links">
-                <a href="#" name="lista-pelis">Consultar lista</a>
-                <a href="#" name="info-pagina">Sobre Filmora</a>
+                <a href="index.html">Inicio</a>
+                <a href="recomendados.html">Recomendados</a>
+                <a href="pagLista.html">Mi lista</a>
+                <a href="perfil.html" class="account">Perfil</a>
             </div>
         </nav>
     </header>
 
     <main>
 
-        <div class="parte-arriba">
-            <h1>Bienvenidx a Filmora</h1>
-            <h2>Aqui podras ver lo ultimo en pelis y revisar un resumen de tu lista</h2>
-
-            <img src="../assets/imagen-principal.png" alt="imagen" >
-
+        <div class="principal">
+            <div class="caja-principal">
+                <h1>Bienvenido a Filmora</h1>
+                <h2>Descubre lo último en cine y gestiona tu lista personal</h2>
+                <a href="pagLista.html">Ir a mi lista</a>
+            </div>
         </div>
-        
+
+        <div class="peliculas-populares" id="recomendados">
+            <h2>Películas populares</h2>
+            <p>Algunas de las películas más vistas del momento.</p>
+
+            <div class="peliculas-grid">
+                <article class="pelicula-card">
+                    <div class="poster"></div>
+                    <div class="pelicula-body">
+                        <h3>Peli popular 1</h3>
+                        <p>2024 · Acción</p>
+                    </div>
+                </article>
+                <article class="pelicula-card">
+                    <div class="poster"></div>
+                    <div class="pelicula-body">
+                        <h3>Peli popular 2</h3>
+                        <p>2023 · Ciencia ficción</p>
+                    </div>
+                </article>
+                <article class="pelicula-card">
+                    <div class="poster"></div>
+                    <div class="pelicula-body">
+                        <h3>Peli popular 3</h3>
+                        <p>2022 · Drama</p>
+                    </div>
+                </article>
+                <article class="pelicula-card">
+                    <div class="poster">🎬</div>
+                    <div class="pelicula-body">
+                        <h3>Peli popular 4</h3>
+                        <p>2021 · Comedia</p>
+                    </div>
+                </article>
+                <article class="pelicula-card">
+                    <div class="poster">🎬</div>
+                    <div class="pelicula-body">
+                        <h3>Peli popular 5</h3>
+                        <p>2020 · Thriller</p>
+                    </div>
+                </article>
+                <article class="pelicula-card">
+                    <div class="poster">🎬</div>
+                    <div class="pelicula-body">
+                        <h3>Peli popular 6</h3>
+                        <p>2019 · Fantasía</p>
+                    </div>
+                </article>
+            </div>
+        </div>
+
+        <div class="lista-personal">
+            <h2>⭐ Mi lista</h2>
+            <p>Un vistazo rápido a tus favoritas recientes.</p>
+
+            <div class="lista-resumen" id="chipsFavoritas">
+                <!-- Chips de pelis favoritas recientes -->
+            </div>
+
+            <a href="pagLista.html">Ver todas mis películas →</a>
+        </div>
+
+        <footer class="site-footer">
+            <div class="footer-content">
+                <div>
+                    <div class="footer-brand">Filmora</div>
+                    <small>Tu app para organizar y descubrir películas.</small>
+                </div>
+                <div>
+                    <div class="footer-brand">Enlaces rápidos</div>
+                    <div><a href="#recomendados">Recomendados</a></div>
+                    <div><a href="pagLista.html">Mi lista</a></div>
+                    <div><a href="perfil.html">Mi perfil</a></div>
+                </div>
+                <div>
+                    <div class="footer-brand">Ayuda</div>
+                    <div><a href="#">Centro de ayuda</a></div>
+                    <div><a href="#">Términos y privacidad</a></div>
+                </div>
+            </div>
+        </footer>
+
     </main>
 
+    <!-- Bootstrap JS -->
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+    <script src="favoritos.js"></script>
+    <script src="api.js"></script>
+    <script>
+        document.addEventListener("DOMContentLoaded", () => {
+            const contenedor = document.getElementById("chipsFavoritas");
+            if (!contenedor) return;
+
+            const favoritos = getFavorites().slice(0, 10);
+            contenedor.innerHTML = "";
+
+            if (!favoritos.length) {
+                contenedor.innerHTML = "<span class='lista-chip'>Todavía no tienes favoritas. ¡Marca alguna ★ arriba!</span>";
+                return;
+            }
+
+            favoritos.forEach((movie) => {
+                const chip = document.createElement("span");
+                chip.className = "lista-chip";
+                chip.textContent = movie.title;
+                contenedor.appendChild(chip);
+            });
+        });
+    </script>
 </body>
+
 </html>

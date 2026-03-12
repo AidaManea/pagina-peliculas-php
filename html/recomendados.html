@@ -4,8 +4,9 @@
 <head>
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1">
-    <meta name="description" content="Tu lista personal de películas favoritas en Filmora.">
-    <title>Mis películas favoritas - Filmora</title>
+    <meta name="description"
+        content="Películas recomendadas por Filmora. Filtra por año y descubre nuevas joyas del cine.">
+    <title>Recomendadas - Filmora</title>
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;500;600;700;800&display=swap"
@@ -13,7 +14,7 @@
     <!-- Bootstrap 5 -->
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
     <!-- Estilos propios -->
-    <link rel="stylesheet" type="text/css" media="screen" href="../css/pagLista.css">
+    <link rel="stylesheet" type="text/css" media="screen" href="../css/recomendados.css">
 </head>
 
 <body>
@@ -32,22 +33,28 @@
         </nav>
     </header>
 
-    <main class="lista-contenido">
-        <section class="lista-header">
-            <h1>Mis películas favoritas</h1>
-            <p>Tu lista personal de películas guardadas.</p>
-        </section>
+    <main>
+        <section class="reco-contenido">
+            <div class="reco-header">
+                <div>
+                    <h1>🎥 Películas recomendadas</h1>
+                    <p>Explora recomendaciones y filtra por año de estreno.</p>
+                </div>
+                <div class="filtro">
+                    <label for="filtroAnio">Filtrar por año</label>
+                    <select id="filtroAnio">
+                        <option value="todos">Todos</option>
+                        <option value="antes2000">Antes de 2000</option>
+                        <option value="2000_2010">2000 – 2010</option>
+                        <option value="despues2010">Después de 2010</option>
+                    </select>
+                </div>
+            </div>
 
-        <section class="lista-peliculas">
-            <div class="lista-grid" id="listaFavoritas">
-                <!-- Aquí se pintarán las tarjetas favoritas desde localStorage -->
+            <div class="peliculas-grid" id="gridRecomendados">
+                <!-- Se rellena con JS desde la API -->
             </div>
         </section>
-
-        <div class="lista-vacia-msg" id="listaVacia">
-            <p>Cuando añadas películas a favoritos desde la página principal, aparecerán aquí.</p>
-            <a href="index.html" class="btn-ir-inicio">Ir al inicio</a>
-        </div>
     </main>
 
     <footer class="site-footer">
@@ -58,7 +65,8 @@
             </div>
             <div>
                 <div class="footer-brand">Enlaces rápidos</div>
-                <div><a href="index.html#recomendados">Recomendados</a></div>
+                <div><a href="index.html">Inicio</a></div>
+                <div><a href="recomendados.html">Recomendados</a></div>
                 <div><a href="pagLista.html">Mi lista</a></div>
                 <div><a href="perfil.html">Mi perfil</a></div>
             </div>
@@ -73,27 +81,7 @@
     <!-- Bootstrap JS -->
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
     <script src="favoritos.js"></script>
-    <script>
-        document.addEventListener("DOMContentLoaded", () => {
-            const contenedor = document.getElementById("listaFavoritas");
-            const vacia = document.getElementById("listaVacia");
-            if (!contenedor) return;
-
-            const favoritos = getFavorites();
-            contenedor.innerHTML = "";
-
-            if (!favoritos.length) {
-                vacia.style.display = "block";
-                return;
-            }
-
-            vacia.style.display = "none";
-            favoritos.forEach((movie) => {
-                const card = createMovieCard(movie, { showFavoriteButton: false });
-                contenedor.appendChild(card);
-            });
-        });
-    </script>
+    <script src="recomendados.js"></script>
 </body>
 
 </html>

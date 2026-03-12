@@ -1,29 +1,32 @@
 <?php
 require('db.php');
-    
+
 try {
   $conn = new PDO("mysql:host=$servername;dbname=$dbname", $username, $password);
-  // set the PDO error mode to exception
   $conn->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION);
 
+  $usernamePost = isset($_POST['user']) ? trim($_POST['user']) : '';
+  $emailPost = isset($_POST['email']) ? trim($_POST['email']) : '';
+  $passPost = isset($_POST['pass']) ? $_POST['pass'] : '';
 
-  //aquí empieza el insert 
-  $stmt = $conn->prepare("INSERT INTO users (username, password)
-  VALUES (:username, :password)");
-  $stmt->bindParam(':username', $_POST['user']);
-  $stmt->bindParam(':password', hash('sha256',$_POST['pass']));
+  if ($usernamePost === '' || $emailPost === '' || $passPost === '') {
+    header("Location: ../html/Registro.html");
+    exit();
+  }
 
-  // use exec() because no results are returned
+  // Registro (username, email, password). Si tu tabla no tiene email aún, dime y lo ajusto.
+  $stmt = $conn->prepare("INSERT INTO users (username, email, password) VALUES (:username, :email, :password)");
+  $stmt->bindParam(':username', $usernamePost);
+  $stmt->bindParam(':email', $emailPost);
+  $passwordHash = hash('sha256', $passPost);
+  $stmt->bindParam(':password', $passwordHash);
+
   $stmt->execute();
-  header("Location: login.php");
-
+  header("Location: ../html/login.html");
+  exit();
 } catch(PDOException $e) {
-  echo $sql . "<br>" . $e->getMessage();
+  echo "Error: " . $e->getMessage();
 }
 
 $conn = null;
-
-
-
-
 ?>

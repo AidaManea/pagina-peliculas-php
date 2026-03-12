@@ -1,0 +1,131 @@
+<!DOCTYPE html>
+<html lang="es">
+
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <meta name="description" content="Tu perfil en Filmora. Gestiona tus datos y preferencias.">
+    <title>Mi perfil - Filmora</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;500;600;700;800&display=swap"
+        rel="stylesheet">
+    <!-- Bootstrap 5 -->
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <!-- Estilos propios -->
+    <link rel="stylesheet" type="text/css" media="screen" href="../css/perfil.css">
+</head>
+
+<body>
+    <header>
+        <nav>
+            <a href="index.html">
+                <img src="../assets/filmora-logo.png" alt="Filmora">
+            </a>
+            <h2>Filmora</h2>
+            <div class="links">
+                <a href="index.html">Inicio</a>
+                <a href="recomendados.html">Recomendados</a>
+                <a href="pagLista.html">Mi lista</a>
+                <a href="perfil.html" class="account">Perfil</a>
+            </div>
+        </nav>
+    </header>
+
+    <main class="perfil-contenido container py-4">
+        <div class="row g-4">
+            <section class="col-lg-4">
+                <div class="perfil-card h-100">
+                    <div class="perfil-avatar">
+                        <img src="../assets/defaultpfp.jpg" alt="Foto de perfil" class="avatar-img">
+                    </div>
+                    <h1 class="perfil-nombre">Usuario</h1>
+                    <p class="perfil-email">usuario@ejemplo.com</p>
+
+                    <div class="perfil-datos">
+                        <div class="dato">
+                            <span class="dato-label">Mi lista</span>
+                            <span class="dato-valor">0</span>
+                        </div>
+                        <div class="dato">
+                            <span class="dato-label">Vistas</span>
+                            <span class="dato-valor">0</span>
+                        </div>
+                    </div>
+                </div>
+            </section>
+
+            <section class="col-lg-8">
+                <div class="card mb-4 shadow-sm">
+                    <div class="card-body">
+                        <h2 class="h5 mb-3">Datos personales</h2>
+                        <form>
+                            <div class="mb-3">
+                                <label for="perfilNombre" class="form-label">Nombre de usuario</label>
+                                <input type="text" class="form-control" id="perfilNombre" placeholder="Tu usuario">
+                            </div>
+                            <div class="mb-3">
+                                <label for="perfilEmail" class="form-label">Correo electrónico</label>
+                                <input type="email" class="form-control" id="perfilEmail"
+                                    placeholder="tucorreo@ejemplo.com">
+                            </div>
+                            <div class="text-end">
+                                <button type="button" class="btn btn-dark">Guardar cambios</button>
+                            </div>
+                        </form>
+                    </div>
+                </div>
+
+                <div class="card shadow-sm">
+                    <div class="card-body">
+                        <h2 class="h5 mb-3">Cambio de contraseña</h2>
+                        <form>
+                            <div class="mb-3">
+                                <label for="oldPass" class="form-label">Contraseña actual</label>
+                                <input type="password" class="form-control" id="oldPass"
+                                    placeholder="Contraseña actual">
+                            </div>
+                            <div class="mb-3">
+                                <label for="newPass" class="form-label">Nueva contraseña</label>
+                                <input type="password" class="form-control" id="newPass" placeholder="Nueva contraseña">
+                            </div>
+                            <div class="mb-3">
+                                <label for="repNewPass" class="form-label">Repite la nueva contraseña</label>
+                                <input type="password" class="form-control" id="repNewPass"
+                                    placeholder="Repite la nueva contraseña">
+                            </div>
+                            <div class="text-end">
+                                <button type="button" class="btn btn-outline-dark">Actualizar contraseña</button>
+                            </div>
+                        </form>
+                    </div>
+                </div>
+            </section>
+        </div>
+    </main>
+
+    <footer class="site-footer">
+        <div class="footer-content">
+            <div>
+                <div class="footer-brand">Filmora</div>
+                <small>Tu app para organizar y descubrir películas.</small>
+            </div>
+            <div>
+                <div class="footer-brand">Enlaces rápidos</div>
+                <div><a href="index.html#recomendados">Recomendados</a></div>
+                <div><a href="pagLista.html">Mi lista</a></div>
+                <div><a href="perfil.html">Mi perfil</a></div>
+            </div>
+            <div>
+                <div class="footer-brand">Ayuda</div>
+                <div><a href="#">Centro de ayuda</a></div>
+                <div><a href="#">Términos y privacidad</a></div>
+            </div>
+        </div>
+    </footer>
+
+    <!-- Bootstrap JS -->
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+</body>
+
+</html>
