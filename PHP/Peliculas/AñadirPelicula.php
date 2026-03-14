@@ -1,5 +1,5 @@
 <?php
-require('../Conexiondb.php');
+require('../db.php');
 
 try {
   $conn = new PDO("mysql:host=$servername;dbname=$dbname", $username, $password);
@@ -20,7 +20,7 @@ try {
 
 
   $stmt->execute();
-  header("Location: /html/registro.php");//< -- CAMBAIR LA RUTA DEL JS
+  header("Location: ../html/pagLista");//< -- CAMBAIR LA RUTA DEL JS
 
 echo "Conexión exitosa";
 } catch(PDOException $e) {
