@@ -20,7 +20,7 @@
     <header>
         <nav>
             <a href="index.html">
-                <img src="../assets/filmora-logo.png" alt="Filmora">
+                <img src="../assets/logo-simple.png" alt="Filmora">
             </a>
             <h2>Filmora</h2>
             <div class="links">
@@ -34,8 +34,27 @@
 
     <main class="lista-contenido">
         <section class="lista-header">
-            <h1>Mis películas favoritas</h1>
-            <p>Tu lista personal de películas guardadas.</p>
+            <div class="lista-header-top d-flex align-items-start justify-content-between">
+                <div>
+                    <h1>Mis películas favoritas</h1>
+                    <p>Tu lista personal de películas guardadas.</p>
+                </div>
+                <button id="btnToggleEdit" class="btn-toggle-edit" type="button">
+                    Editar lista
+                </button>
+            </div>
+
+            <div class="search-panel">
+                <div class="search-panel-header">
+                    <h3>Buscador rápido</h3>
+                    <small>Añade una película por título y la guardamos en tu lista y en la base de datos.</small>
+                </div>
+                <div class="search-panel-row">
+                    <input type="text" id="omdbSearchInput" class="search-input" placeholder="Escribe el título de una película...">
+                    <button id="omdbSearchBtn" type="button" class="search-button">Buscar y añadir</button>
+                </div>
+                <div id="omdbSearchResult" class="search-result"></div>
+            </div>
         </section>
 
         <section class="lista-peliculas">
@@ -58,14 +77,10 @@
             </div>
             <div>
                 <div class="footer-brand">Enlaces rápidos</div>
-                <div><a href="index.html#recomendados">Recomendados</a></div>
+                <div><a href="index.html">Inicio</a></div>
+                <div><a href="recomendados.html">Recomendados</a></div>
                 <div><a href="pagLista.html">Mi lista</a></div>
                 <div><a href="perfil.html">Mi perfil</a></div>
-            </div>
-            <div>
-                <div class="footer-brand">Ayuda</div>
-                <div><a href="#">Centro de ayuda</a></div>
-                <div><a href="#">Términos y privacidad</a></div>
             </div>
         </div>
     </footer>
@@ -89,8 +104,105 @@
 
             vacia.style.display = "none";
             favoritos.forEach((movie) => {
-                const card = createMovieCard(movie, { showFavoriteButton: false });
+                const card = createMovieCard(movie, { showFavoriteButton: false, showSeenButton: true, showEditButton: true });
                 contenedor.appendChild(card);
+            });
+
+            // Lógica para togglear el modo "Editar Lista"
+            const btnToggleEdit = document.getElementById("btnToggleEdit");
+            let isEditMode = false;
+            btnToggleEdit.addEventListener("click", () => {
+                isEditMode = !isEditMode;
+                btnToggleEdit.classList.toggle("is-active", isEditMode);
+                btnToggleEdit.textContent = isEditMode ? "Terminar edición" : "Editar lista";
+
+                const deleteBtns = document.querySelectorAll(".edit-controls");
+                deleteBtns.forEach(btn => {
+                    btn.style.display = isEditMode ? "block" : "none";
+                });
+            });
+
+            // Lógica para el buscador OMDB
+            const OMDB_API_KEY = "b5ae98fe";
+            const searchBtn = document.getElementById("omdbSearchBtn");
+            const searchInput = document.getElementById("omdbSearchInput");
+            const searchResult = document.getElementById("omdbSearchResult");
+
+            searchBtn.addEventListener("click", () => {
+                const query = searchInput.value.trim();
+                if (!query) {
+                    searchResult.textContent = "Escribe un título antes de buscar.";
+                    searchResult.className = "search-result search-result--warning";
+                    return;
+                }
+
+                searchResult.textContent = "Buscando película...";
+                searchResult.className = "search-result";
+                
+                fetch(`https://www.omdbapi.com/?apikey=${OMDB_API_KEY}&type=movie&t=${encodeURIComponent(query)}`)
+                  .then(r => r.json())
+                  .then(data => {
+                      if (data.Response === "True") {
+                          const movie = {
+                              id: data.imdbID,
+                              title: data.Title,
+                              release_date: data.Year,
+                              director: data.Director || "",
+                              image: data.Poster !== "N/A" ? data.Poster : "",
+                              movie_banner: ""
+                          };
+
+                          // Añadir local si no está
+                          if (!isFavorite(movie.id)) {
+                              toggleFavorite(movie);
+                              
+                              // Recargar lista visual
+                              const newCard = createMovieCard(movie, { showFavoriteButton: false, showSeenButton: true, showEditButton: true });
+                              if (isEditMode) {
+                                  newCard.querySelector(".edit-controls").style.display = "block";
+                              }
+                              contenedor.appendChild(newCard);
+                              vacia.style.display = "none";
+
+                              searchResult.textContent = `'${movie.title}' añadida a tu lista. Guardando en base de datos...`;
+                              searchResult.className = "search-result search-result--ok";
+
+                              // Llamada al PHP para guardar en DB
+                              const formData = new FormData();
+                              formData.append('titulo', data.Title);
+                              formData.append('genero', data.Genre || 'Desconocido');
+                              formData.append('duracion', data.Runtime || '0 min');
+                              formData.append('descripcion', data.Plot || 'Sin descripción');
+                              let anioFormat = data.Released && data.Released !== "N/A" ? new Date(data.Released).toISOString().split('T')[0] : (data.Year + "-01-01");
+                              formData.append('año', anioFormat);
+                              formData.append('estrellas', data.Actors || 'Desconocidos');
+                              formData.append('director', data.Director || 'Desconocido');
+
+                              fetch('../PHP/Peliculas/apiGuardarPelicula.php', {
+                                  method: 'POST',
+                                  body: formData
+                              }).then(res => res.text()).then(text => {
+                                  console.log("Respuesta PHP:", text);
+                                  searchResult.textContent = `'${movie.title}' guardada correctamente.`;
+                                  searchResult.className = "search-result search-result--ok";
+                              }).catch(e => {
+                                  console.error(e);
+                                  searchResult.textContent = "Película añadida a tu lista, pero ha habido un problema al guardarla en la base de datos.";
+                                  searchResult.className = "search-result search-result--warning";
+                              });
+                          } else {
+                              searchResult.textContent = "Esta película ya está en tu lista.";
+                              searchResult.className = "search-result search-result--warning";
+                          }
+                      } else {
+                          searchResult.textContent = "No se ha encontrado la película. Prueba con otra variante del título.";
+                          searchResult.className = "search-result search-result--error";
+                      }
+                  })
+                  .catch(err => {
+                      searchResult.textContent = "Ha ocurrido un error al buscar la película. Inténtalo de nuevo en unos segundos.";
+                      searchResult.className = "search-result search-result--error";
+                  });
             });
         });
     </script>

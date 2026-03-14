@@ -56,7 +56,7 @@ document.addEventListener("DOMContentLoaded", () => {
           image: film.Poster !== "N/A" ? film.Poster : "",
           movie_banner: "",
         };
-        const card = createMovieCard(movie, { showFavoriteButton: true });
+        const card = createMovieCard(movie, { showFavoriteButton: true, showSeenButton: true });
         grid.appendChild(card);
       });
     })

@@ -1,11 +1,62 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="es">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Document</title>
+    <title>Editar Película</title>
+    <!-- Mismo estilo básico que crearpelicula.html o un poco mejor -->
 </head>
-<body>
-    
+<body style="font-family: Arial, sans-serif; padding: 20px; text-align: center;">
+    <h1 id="tituloPagina">Editar Película</h1>
+    <form action="editarPelicula.php" method="post" style="display: inline-block; text-align: left; background: #f9f9f9; padding: 20px; border-radius: 8px;">
+        <input type="hidden" name="id" id="movieId">
+
+        <label style="display:block; margin-top:10px;">Título</label>
+        <input type="text" name="titulo" id="titulo" required style="width: 100%; padding: 5px;">
+
+        <label style="display:block; margin-top:10px;">Género</label>
+        <select name="genero" style="width: 100%; padding: 5px;">
+            <option>Accion</option>
+            <option>Comedia</option>
+            <option>Drama</option>
+            <option>Terror</option>
+            <option>Ciencia ficción</option>
+        </select>
+
+        <label style="display:block; margin-top:10px;">Duración (ej. 120 min)</label>
+        <input type="text" name="duracion" id="duracion" style="width: 100%; padding: 5px;">
+
+        <label style="display:block; margin-top:10px;">Descripción</label>
+        <textarea name="descripcion" id="descripcion" style="width: 100%; padding: 5px;"></textarea>
+
+        <label style="display:block; margin-top:10px;">Año</label>
+        <input type="date" name="año" id="año" style="width: 100%; padding: 5px;">
+
+        <label style="display:block; margin-top:10px;">Estrellas (Actores)</label>
+        <input type="text" name="estrellas" id="estrellas" style="width: 100%; padding: 5px;">
+
+        <label style="display:block; margin-top:10px;">Director</label>
+        <input type="text" name="director" id="director" style="width: 100%; padding: 5px;">
+
+        <div style="margin-top: 20px; text-align: center;">
+            <input type="submit" value="Guardar Cambios" style="padding: 10px 20px; background: #4caf50; color: white; border: none; cursor: pointer; border-radius: 5px;">
+            <a href="../../html/pagLista.html" style="margin-left: 10px; color: #f44336; text-decoration: none;">Cancelar</a>
+        </div>
+    </form>
+
+    <script>
+        // Rellenar ID y Título desde la URL si existe
+        const params = new URLSearchParams(window.location.search);
+        const movieId = params.get('id');
+        const movieTitle = params.get('titulo');
+
+        if (movieId) {
+            document.getElementById('movieId').value = movieId;
+        }
+        if (movieTitle) {
+            document.getElementById('titulo').value = movieTitle;
+            document.getElementById('tituloPagina').innerText = "Editar: " + movieTitle;
+        }
+    </script>
 </body>
 </html>

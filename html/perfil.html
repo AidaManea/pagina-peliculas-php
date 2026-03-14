@@ -20,7 +20,7 @@
     <header>
         <nav>
             <a href="index.html">
-                <img src="../assets/filmora-logo.png" alt="Filmora">
+                <img src="../assets/logo-simple.png" alt="Filmora">
             </a>
             <h2>Filmora</h2>
             <div class="links">
@@ -45,11 +45,11 @@
                     <div class="perfil-datos">
                         <div class="dato">
                             <span class="dato-label">Mi lista</span>
-                            <span class="dato-valor">0</span>
+                            <span class="dato-valor" id="perfilMiLista">0</span>
                         </div>
                         <div class="dato">
                             <span class="dato-label">Vistas</span>
-                            <span class="dato-valor">0</span>
+                            <span class="dato-valor" id="perfilVistas">0</span>
                         </div>
                     </div>
                 </div>
@@ -59,18 +59,22 @@
                 <div class="card mb-4 shadow-sm">
                     <div class="card-body">
                         <h2 class="h5 mb-3">Datos personales</h2>
-                        <form>
+                        <form id="formDatos">
+                            <div id="datosError" class="alert alert-danger" style="display: none; color: #721c24; background-color: #f8d7da; border-color: #f5c6cb; padding: .75rem 1.25rem; margin-bottom: 1rem;"></div>
+                            <div id="datosSuccess" class="alert alert-success" style="display: none; color: #155724; background-color: #d4edda; border-color: #c3e6cb; padding: .75rem 1.25rem; margin-bottom: 1rem;"></div>
+
+                            
                             <div class="mb-3">
                                 <label for="perfilNombre" class="form-label">Nombre de usuario</label>
-                                <input type="text" class="form-control" id="perfilNombre" placeholder="Tu usuario">
+                                <input type="text" class="form-control" id="perfilNombre" name="usuario" placeholder="Tu usuario">
                             </div>
                             <div class="mb-3">
                                 <label for="perfilEmail" class="form-label">Correo electrónico</label>
-                                <input type="email" class="form-control" id="perfilEmail"
+                                <input type="email" class="form-control" id="perfilEmail" name="email"
                                     placeholder="tucorreo@ejemplo.com">
                             </div>
                             <div class="text-end">
-                                <button type="button" class="btn btn-dark">Guardar cambios</button>
+                                <button type="submit" class="btn btn-dark">Guardar cambios</button>
                             </div>
                         </form>
                     </div>
@@ -79,23 +83,26 @@
                 <div class="card shadow-sm">
                     <div class="card-body">
                         <h2 class="h5 mb-3">Cambio de contraseña</h2>
-                        <form>
+                        <form id="formPassword">
+                            <div id="passError" class="alert alert-danger" style="display: none; color: #721c24; background-color: #f8d7da; border-color: #f5c6cb; padding: .75rem 1.25rem; margin-bottom: 1rem;"></div>
+                            <div id="passSuccess" class="alert alert-success" style="display: none; color: #155724; background-color: #d4edda; border-color: #c3e6cb; padding: .75rem 1.25rem; margin-bottom: 1rem;"></div>
+
                             <div class="mb-3">
                                 <label for="oldPass" class="form-label">Contraseña actual</label>
-                                <input type="password" class="form-control" id="oldPass"
+                                <input type="password" class="form-control" id="oldPass" name="oldPass"
                                     placeholder="Contraseña actual">
                             </div>
                             <div class="mb-3">
                                 <label for="newPass" class="form-label">Nueva contraseña</label>
-                                <input type="password" class="form-control" id="newPass" placeholder="Nueva contraseña">
+                                <input type="password" class="form-control" id="newPass" name="newPass" placeholder="Nueva contraseña">
                             </div>
                             <div class="mb-3">
                                 <label for="repNewPass" class="form-label">Repite la nueva contraseña</label>
-                                <input type="password" class="form-control" id="repNewPass"
+                                <input type="password" class="form-control" id="repNewPass" name="repNewPass"
                                     placeholder="Repite la nueva contraseña">
                             </div>
                             <div class="text-end">
-                                <button type="button" class="btn btn-outline-dark">Actualizar contraseña</button>
+                                <button type="submit" class="btn btn-outline-dark">Actualizar contraseña</button>
                             </div>
                         </form>
                     </div>
@@ -112,20 +119,137 @@
             </div>
             <div>
                 <div class="footer-brand">Enlaces rápidos</div>
-                <div><a href="index.html#recomendados">Recomendados</a></div>
+                <div><a href="index.html">Inicio</a></div>
+                <div><a href="recomendados.html">Recomendados</a></div>
                 <div><a href="pagLista.html">Mi lista</a></div>
                 <div><a href="perfil.html">Mi perfil</a></div>
-            </div>
-            <div>
-                <div class="footer-brand">Ayuda</div>
-                <div><a href="#">Centro de ayuda</a></div>
-                <div><a href="#">Términos y privacidad</a></div>
             </div>
         </div>
     </footer>
 
     <!-- Bootstrap JS -->
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+    <script>
+        document.addEventListener("DOMContentLoaded", () => {
+            fetch("../PHP/getPerfilDatos.php", {
+                method: "GET",
+                credentials: "include"
+            })
+                .then((res) => res.json())
+                .then((data) => {
+                    if (!data.success) {
+                        return;
+                    }
+
+                    const nombreEl = document.querySelector(".perfil-nombre");
+                    const emailEl = document.querySelector(".perfil-email");
+                    const miListaEl = document.getElementById("perfilMiLista");
+                    const vistasEl = document.getElementById("perfilVistas");
+                    
+                    const inputNombre = document.getElementById("perfilNombre");
+                    const inputEmail = document.getElementById("perfilEmail");
+
+                    if (nombreEl) nombreEl.textContent = data.usuario || "Usuario";
+                    if (emailEl) emailEl.textContent = data.email || "";
+                    if (miListaEl) miListaEl.textContent = data.totalFavoritas ?? 0;
+                    if (vistasEl) vistasEl.textContent = data.totalVistas ?? 0;
+                    
+                    if (inputNombre) inputNombre.value = data.usuario || "";
+                    if (inputEmail) inputEmail.value = data.email || "";
+                })
+                .catch(() => {
+                    // Si falla la llamada simplemente dejamos los valores por defecto
+                });
+                
+            const formDatos = document.getElementById("formDatos");
+            if (formDatos) {
+                formDatos.addEventListener("submit", (e) => {
+                    e.preventDefault();
+                    const formData = new FormData(formDatos);
+                    formData.append("action", "updateDatos");
+                    
+                    const errorBox = document.getElementById("datosError");
+                    const successBox = document.getElementById("datosSuccess");
+                    errorBox.style.display = "none";
+                    successBox.style.display = "none";
+
+                    fetch("../PHP/updatePerfil.php", {
+                        method: "POST",
+                        body: formData
+                    })
+                    .then(res => res.json())
+                    .then(data => {
+                        if(data.success) {
+                            successBox.textContent = data.message;
+                            successBox.style.display = "block";
+                            const nombreEl = document.querySelector(".perfil-nombre");
+                            const emailEl = document.querySelector(".perfil-email");
+                            if (nombreEl) nombreEl.textContent = document.getElementById("perfilNombre").value;
+                            if (emailEl) emailEl.textContent = document.getElementById("perfilEmail").value;
+                            alert("¡Datos actualizados con éxito!");
+                        } else {
+                            errorBox.textContent = data.message;
+                            errorBox.style.display = "block";
+                            alert("Error: " + data.message);
+                        }
+                    })
+                    .catch(err => {
+                        errorBox.textContent = "Error de conexión al servidor.";
+                        errorBox.style.display = "block";
+                        alert("Error de conexión al servidor.");
+                    });
+                });
+            }
+
+            const formPassword = document.getElementById("formPassword");
+            if (formPassword) {
+                formPassword.addEventListener("submit", (e) => {
+                    e.preventDefault();
+                    
+                    const newPass = document.getElementById("newPass").value;
+                    const repNewPass = document.getElementById("repNewPass").value;
+                    
+                    const errorBox = document.getElementById("passError");
+                    const successBox = document.getElementById("passSuccess");
+                    errorBox.style.display = "none";
+                    successBox.style.display = "none";
+                    
+                    if (newPass !== repNewPass) {
+                         errorBox.textContent = "Las contraseñas nuevas no coinciden.";
+                         errorBox.style.display = "block";
+                         alert("Las contraseñas nuevas no coinciden.");
+                         return;
+                    }
+
+                    const formData = new FormData(formPassword);
+                    formData.append("action", "updatePassword");
+
+                    fetch("../PHP/updatePerfil.php", {
+                        method: "POST",
+                        body: formData
+                    })
+                    .then(res => res.json())
+                    .then(data => {
+                        if(data.success) {
+                            successBox.textContent = data.message;
+                            successBox.style.display = "block";
+                            formPassword.reset();
+                            alert("¡Contraseña actualizada con éxito!");
+                        } else {
+                            errorBox.textContent = data.message;
+                            errorBox.style.display = "block";
+                            alert("Error: " + data.message);
+                        }
+                    })
+                    .catch(err => {
+                        errorBox.textContent = "Error de conexión al servidor.";
+                        errorBox.style.display = "block";
+                        alert("Error de conexión al servidor.");
+                    });
+                });
+            }
+        });
+    </script>
 </body>
 
 </html>

@@ -33,7 +33,7 @@ function renderRecomendados() {
   }
 
   listaFiltrada.forEach((movie) => {
-    const card = createMovieCard(movie, { showFavoriteButton: true });
+    const card = createMovieCard(movie, { showFavoriteButton: true, showSeenButton: true });
     grid.appendChild(card);
   });
 }
