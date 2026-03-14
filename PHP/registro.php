@@ -13,8 +13,6 @@ try {
     header("Location: ../html/Registro.html");
     exit();
   }
-
-  // Registro (username, email, password). Si tu tabla no tiene email aún, dime y lo ajusto.
   $stmt = $conn->prepare("INSERT INTO users (username, email, password) VALUES (:username, :email, :password)");
   $stmt->bindParam(':username', $usernamePost);
   $stmt->bindParam(':email', $emailPost);

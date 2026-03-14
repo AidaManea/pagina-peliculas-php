@@ -1,6 +1,6 @@
 <?php
 
-require('db.php');
+require('../db.php');
 
 try {
   $conn = new PDO("mysql:host=$servername;dbname=$dbname", $username, $password);
@@ -9,7 +9,7 @@ try {
 
 
   //aquí empieza el insert 
-  $stmt = $conn->prepare("DELETE FROM pelicula WHERE `pelicula`.`idpelis` = :idpelis");
+  $stmt = $conn->prepare("DELETE FROM filmora WHERE `pelis`.`idpelicula` = :id");
   $stmt->bindParam(':id', $_GET['id']);
   
 

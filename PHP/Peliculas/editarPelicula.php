@@ -1,5 +1,5 @@
 <?php
-require('Conexiondb.php');
+require('../db.php');
 
 try {
   $conn = new PDO("mysql:host=$servername;dbname=$dbname", $username, $password);
