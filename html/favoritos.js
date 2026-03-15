@@ -131,8 +131,8 @@ function createMovieCard(movie, showFavs, showSeen, showEdit) {
   }
 
   card.innerHTML = `
-    <div class="poster" style="${posterUrl ? `background-image:url('${posterUrl}');background-size:cover;background-position:center;` : ""}">
-      ${!posterUrl ? "🎬" : ""}
+    <div class="poster">
+      ${posterUrl ? `<img src="${posterUrl}" alt="${movie.title}">` : "🎬"}
       ${extraButtons}
     </div>
     <div class="pelicula-body">
