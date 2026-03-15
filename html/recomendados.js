@@ -45,36 +45,66 @@ document.addEventListener("DOMContentLoaded", () => {
 
   // Lista de pelis recomendadas "chulas"
   const recommendedTitles = [
-    "La La Land",
+    // Animación y familiar
     "Coco",
     "Inside Out",
-    "Whiplash",
-    "Mad Max: Fury Road",
-    "Spider-Man: Into the Spider-Verse",
-    "Guardians of the Galaxy Vol. 2",
-    "The Social Network",
-    "Dune",
-    "Soul",
-    "The Grand Budapest Hotel",
-    "Jojo Rabbit",
-    "Black Panther",
-    "Doctor Strange",
+    "Toy Story",
+    "Toy Story 2",
+    "Toy Story 3",
+    "Finding Nemo",
+    "Finding Dory",
+    "Monsters, Inc.",
+    "Monsters University",
+    "The Incredibles",
+    "The Incredibles 2",
     "Ratatouille",
     "Up",
-    "The Incredibles",
+    "WALL·E",
     "Zootopia",
-    "Toy Story 3",
     "Moana",
+    "Frozen",
+    "Frozen II",
+    "Big Hero 6",
+    "How to Train Your Dragon",
+    "How to Train Your Dragon 2",
+    "Kung Fu Panda",
+    "Kung Fu Panda 2",
     "Shrek",
     "Shrek 2",
-    "Kung Fu Panda",
-    "How to Train Your Dragon",
-    "Big Hero 6",
-    "Frozen",
-    "WALL·E",
-    "Monsters, Inc.",
-    "Finding Nemo",
     "The Lego Movie",
+    // Drama y premios
+    "La La Land",
+    "Whiplash",
+    "The Social Network",
+    "Parasite",
+    "Birdman",
+    "Moonlight",
+    "Green Book",
+    "Spotlight",
+    "The King\'s Speech",
+    "Slumdog Millionaire",
+    "The Pursuit of Happyness",
+    "A Beautiful Mind",
+    // Ciencia ficción / acción moderna
+    "Mad Max: Fury Road",
+    "Blade Runner 2049",
+    "Arrival",
+    "Edge of Tomorrow",
+    "Logan",
+    "Dune",
+    "Interstellar",
+    "Inception",
+    "Guardians of the Galaxy Vol. 2",
+    "Black Panther",
+    "Doctor Strange",
+    "Spider-Man: Into the Spider-Verse",
+    "The Batman",
+    "Knives Out",
+    "Baby Driver",
+    "The Prestige",
+    "Prisoners",
+    "No Country for Old Men",
+    "There Will Be Blood",
     // Terror y suspense
     "The Conjuring",
     "The Conjuring 2",
@@ -84,56 +114,66 @@ document.addEventListener("DOMContentLoaded", () => {
     "A Quiet Place",
     "It",
     "The Ring",
-    "The Shining"
+    "The Shining",
+    "Midsommar",
+    "The Babadook",
+    "Train to Busan"
   ];
 
   const requests = recommendedTitles.map((title) =>
     fetch(`https://www.omdbapi.com/?apikey=${OMDB_API_KEY}&type=movie&t=${encodeURIComponent(title)}`)
       .then((res) => res.json())
-      .then((data) => (data && data.Response === "True" ? data : null))
       .catch(() => null)
   );
 
   Promise.all(requests)
     .then((results) => {
-      const valid = [];
-      for (let i = 0; i < results.length; i++) {
-        if (results[i] !== null) {
-          valid.push(results[i]);
-        }
-      }
+      // Igual que en index: siempre mostramos una tarjeta por cada título recomendado.
+      todasLasPeliculas = recommendedTitles.map((title, index) => {
+        const film = results[index];
 
-      todasLasPeliculas = valid.map((film) => {
-        let fdate = film.Year + "-01-01";
-        if (film.Released && film.Released !== "N/A") {
-            fdate = new Date(film.Released).toISOString().split('T')[0];
+        if (film && film.Response === "True") {
+          let fdate = film.Year + "-01-01";
+          if (film.Released && film.Released !== "N/A") {
+              fdate = new Date(film.Released).toISOString().split('T')[0];
+          }
+
+          const movie = {
+            id: film.imdbID,
+            title: film.Title,
+            release_date: film.Year,
+            director: film.Director || "",
+            image: film.Poster !== "N/A" ? film.Poster : "",
+            movie_banner: "",
+            genre: film.Genre || "Desconocido",
+            duration: parseInt((film.Runtime || "").replace(" min", "")) || 0,
+            description: film.Plot || "Sin descripción",
+            rating: parseFloat(film.imdbRating) || 0,
+            formattedDate: fdate
+          };
+
+          const formData = new FormData();
+          formData.append('titulo', movie.title);
+          formData.append('genero', movie.genre);
+          formData.append('duracion', movie.duration);
+          formData.append('descripcion', movie.description);
+          formData.append('año', movie.formattedDate);
+          formData.append('director', movie.director);
+          formData.append('valoracion', movie.rating);
+
+          fetch('../PHP/Peliculas/apiGuardarPelicula.php', { method: 'POST', body: formData }).catch(e => console.error(e));
+          return movie;
         }
 
-        const movie = {
-          id: film.imdbID,
-          title: film.Title,
-          release_date: film.Year,
-          director: film.Director || "",
-          image: film.Poster !== "N/A" ? film.Poster : "",
-          movie_banner: "",
-          genre: film.Genre || "Desconocido",
-          duration: parseInt((film.Runtime || "").replace(" min", "")) || 0,
-          description: film.Plot || "Sin descripción",
-          rating: parseFloat(film.imdbRating) || 0,
-          formattedDate: fdate
+        // Fallback simple si la API no devuelve nada
+        return {
+          id: title,
+          title: title,
+          release_date: "",
+          director: "",
+          image: "",
+          movie_banner: ""
         };
-
-        const formData = new FormData();
-        formData.append('titulo', movie.title);
-        formData.append('genero', movie.genre);
-        formData.append('duracion', movie.duration);
-        formData.append('descripcion', movie.description);
-        formData.append('año', movie.formattedDate);
-        formData.append('director', movie.director);
-        formData.append('valoracion', movie.rating);
-
-        fetch('../PHP/Peliculas/apiGuardarPelicula.php', { method: 'POST', body: formData }).catch(e => console.error(e));
-        return movie;
       });
 
       renderRecomendados();
