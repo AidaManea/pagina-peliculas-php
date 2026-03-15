@@ -23,28 +23,28 @@ document.addEventListener("DOMContentLoaded", () => {
   // Registro
   const registroForm = document.getElementById("registroForm");
   if (registroForm) {
-    const username = document.getElementById("username");
+    const nombre = document.getElementById("nombre");
+    const apellido = document.getElementById("apellido");
+    const usuario = document.getElementById("usuario");
     const email = document.getElementById("email");
     const pass = document.getElementById("pass");
-    const repPass = document.getElementById("repPass");
-    const errorBox = document.getElementById("registroError");
+    const repPass = document.getElementById("rep-pass");
 
     registroForm.addEventListener("submit", (e) => {
       e.preventDefault(); // Prevent default form submission
-      clearError(errorBox);
 
-      if (isEmpty(username?.value) || isEmpty(email?.value) || isEmpty(pass?.value) || isEmpty(repPass?.value)) {
-        showError(errorBox, "Rellena todos los campos antes de registrarte.");
+      if (isEmpty(nombre?.value) || isEmpty(apellido?.value) || isEmpty(usuario?.value) || isEmpty(email?.value) || isEmpty(pass?.value) || isEmpty(repPass?.value)) {
+        alert("Faltan datos por rellenar en el formulario.");
         return;
       }
       
       if (!isValidEmail(email.value)) {
-        showError(errorBox, "Por favor, introduce un correo electrónico válido.");
+        alert("Por favor, introduce un correo electrónico válido.");
         return;
       }
 
       if (pass.value !== repPass.value) {
-        showError(errorBox, "Las contraseñas no coinciden.");
+        alert("Las contraseñas no coinciden.");
         return;
       }
 
@@ -61,15 +61,16 @@ document.addEventListener("DOMContentLoaded", () => {
           alert("¡Registro completado con éxito! Se te enviará al inicio.");
           window.location.href = "index.html";
         } else {
-          // Si el usuario ya existe, solo saltará una alerta pero no llevará a otra página
           alert(data.message || "Error al registrarse.");
-          showError(errorBox, data.message || "Error al registrarse.");
+          // Si el usuario ya existe, redirigir al login según solicitado por el usuario.
+          if (data.message && data.message.includes("ya están registrados")) {
+            window.location.href = "login.html";
+          }
         }
       })
       .catch(err => {
         console.error("Error:", err);
         alert("Ocurrió un error inesperado al contactar con el servidor.");
-        showError(errorBox, "Ocurrió un error inesperado al contactar con el servidor.");
       });
     });
   }

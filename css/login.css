@@ -17,7 +17,8 @@ body {
     overflow: hidden;
     width: 1200px;
     max-width: 90%;
-    height: 700px;
+    min-height: 600px;
+    height: auto;
 }
 
 .lado-izquierdo {
@@ -43,12 +44,11 @@ body {
 }
 
 .lado-derecho {
-    flex: 1;
+    flex: 2;
     padding: 60px;
     display: flex;
     flex-direction: column;
     justify-content: center;
-    width: 25%;
 }
 
 .img-logo {
@@ -70,13 +70,32 @@ form label {
 
 form input[type="text"],
 form input[type="email"],
-form input[type="password"] {
+form input[type="password"],
+form input[type="number"],
+form input[type="date"] {
     padding: 12px 15px;
     margin-bottom: 20px;
     border-radius: 8px;
     border: 1px solid #ccc;
     font-size: 14px;
     transition: 0.3s;
+    width: 100%;
+    box-sizing: border-box;
+}
+
+.form-grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 10px 30px;
+}
+.form-grid > div {
+    display: flex;
+    flex-direction: column;
+}
+.form-grid-full {
+    grid-column: 1 / -1;
+    display: flex;
+    flex-direction: column;
 }
 
 
@@ -102,6 +121,8 @@ form button[type="submit"] {
     font-size: 16px;
     cursor: pointer;
     transition: 0.3s;
+    width: 100%;
+    margin-top: 15px;
 }
 
 form button[type="submit"]:hover {

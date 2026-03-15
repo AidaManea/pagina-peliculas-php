@@ -22,21 +22,43 @@
             <img src="../assets/filmora-logo2.png" alt="no hay imagen que enseñar aqui" name="img-logo"
                 class="animate__animated animate__fadeInDown">
 
-            <form action="../PHP/registro.php" method="POST" class="animate__animated animate__fadeInDown">
-                <label for="nombre">Nombre</label>
-                <input type="text" id="nombre" name="user" placeholder="Ingresa tu nombre">
-
-                <label for="email">Correo electronico</label>
-                <input type="email" id="email" name="email" placeholder="Ingresa tu email">
-
-                <label for="pass">Contraseña</label>
-                <input type="password" id="pass" name="pass" placeholder="Contraseña">
-
-                <label for="repeat-password">Repite tu contraseña!</label>
-                <input type="password" id="rep-pass" placeholder="Repite la contraseña">
+            <form action="../PHP/registro.php" method="POST" id="registroForm" class="animate__animated animate__fadeInDown">
+                <div class="form-grid">
+                    <div>
+                        <label for="nombre">Nombre</label>
+                        <input type="text" id="nombre" name="user" placeholder="Ingresa tu nombre">
+                    </div>
+                    <div>
+                        <label for="apellido">Apellido</label>
+                        <input type="text" id="apellido" name="apellido" placeholder="Ingresa tu apellido">
+                    </div>
+                <div>
+                    <label for="usuario">Usuario</label>
+                    <input type="text" id="usuario" name="usuario" placeholder="Nombre para iniciar sesión">
+                </div>
+                    <div>
+                        <label for="email">Correo electrónico</label>
+                        <input type="email" id="email" name="email" placeholder="Ingresa tu email">
+                    </div>
+                    <div>
+                        <label for="numTelefono">Número de teléfono</label>
+                        <input type="number" id="numTelefono" name="numTelefono" placeholder="Ingresa tu teléfono">
+                    </div>
+                    <div>
+                        <label for="fechaNacimiento">Fecha de nacimiento</label>
+                        <input type="date" id="fechaNacimiento" name="fechaNacimiento">
+                    </div>
+                    <div>
+                        <label for="pass">Contraseña</label>
+                        <input type="password" id="pass" name="pass" placeholder="Contraseña">
+                    </div>
+                    <div>
+                        <label for="rep-pass">Repite tu contraseña</label>
+                        <input type="password" id="rep-pass" name="rep-pass" placeholder="Repite la contraseña">
+                    </div>
+                </div>
                 
-                <button type="submit" id="submit">Registrate</button>
-               
+                <button type="submit" id="submit">Regístrate</button>
             </form>
 
             <p class="ir-login">
@@ -46,7 +68,7 @@
         </div>
     </div>
 
-    <script src='auth.js'></script>
+    <script src="../html/auth.js"></script>
 </body>
 
 </html>
