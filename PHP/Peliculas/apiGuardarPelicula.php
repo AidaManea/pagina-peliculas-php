@@ -5,7 +5,7 @@ try {
   $conn = new PDO("mysql:host=$servername;dbname=$dbname", $username, $password);
   $conn->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION);
 
-  // Obtener datos del POST con isset clasico (sin usar operator ??)
+  //Obtener datos del POST con isset clasico (sin usar operator ??)
   $titulo = isset($_POST['titulo']) ? $_POST['titulo'] : '';
   $genero = isset($_POST['genero']) ? $_POST['genero'] : 'Desconocido';
   $duracion = isset($_POST['duracion']) ? (int)$_POST['duracion'] : 0;
@@ -16,7 +16,7 @@ try {
   $imagen = isset($_POST['imagen']) ? $_POST['imagen'] : '';
 
   if ($titulo !== '') {
-      // Comprobar si ya existe una pelicula con ese titulo (opcional, para no duplicar)
+      //Comprobar si ya existe una pelicula con ese titulo (opcional, para no duplicar)
       $check = $conn->prepare("SELECT idpelicula FROM pelis WHERE titulo = :titulo");
       $check->bindParam(':titulo', $titulo);
       $check->execute();

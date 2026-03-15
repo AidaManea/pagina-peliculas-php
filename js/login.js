@@ -1,6 +1,5 @@
-// =====================================================================
-// VALIDACIÓN LOGIN
-// =====================================================================
+
+//VALIDACIÓN LOGIN
 function validarLogin(e) {
     e.preventDefault();
 
@@ -43,9 +42,9 @@ function validarLogin(e) {
     });
 }
 
-// =====================================================================
-// VALIDACIÓN REGISTRO
-// =====================================================================
+
+//VALIDACIÓN REGISTRO
+
 function validarRegistro(e) {
     e.preventDefault();
 
@@ -92,9 +91,8 @@ function validarRegistro(e) {
     });
 }
 
-// =====================================================================
-// HELPERS UI
-// =====================================================================
+
+
 function mostrarError(msg) {
     let el = document.getElementById('form-msg');
     if (!el) {
@@ -121,9 +119,8 @@ function mostrarExito(msg) {
     el.textContent = msg;
 }
 
-// =====================================================================
-// ENGANCHAR EVENTO SEGÚN QUÉ PÁGINA ESTAMOS
-// =====================================================================
+//ENGANCHAR EVENTO SEGÚN QUÉ PÁGINA ESTAMOS
+
 document.addEventListener('DOMContentLoaded', () => {
     const form = document.querySelector('form');
     if (!form) return;

@@ -103,7 +103,7 @@
                         if(data.success) {
                             msgBox.className = 'alert alert-success';
                             msgBox.textContent = `Película eliminada correctamente.`;
-                            fetchLista(); // Recargar la tabla
+                            fetchLista(); //Recargar la tabla
                         } else {
                             msgBox.className = 'alert alert-danger';
                             msgBox.textContent = data.message || 'Error al eliminar.';

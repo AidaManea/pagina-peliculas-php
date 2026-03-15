@@ -10,9 +10,9 @@
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;500;600;700;800&display=swap"
         rel="stylesheet">
-    <!-- Bootstrap 5 -->
+    <!--Bootstrap 5-->
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
-    <!-- Estilos propios -->
+    <!--Estilos propios-->
     <link rel="stylesheet" type="text/css" media="screen" href="../css/pagLista.css">
 </head>
 
@@ -59,7 +59,7 @@
 
         <section class="lista-peliculas">
             <div class="lista-grid" id="listaFavoritas">
-                <!-- Aquí se pintarán las tarjetas favoritas desde localStorage -->
+                <!--Aquí se pintarán las tarjetas favoritas desde localStorage-->
             </div>
         </section>
 
@@ -85,7 +85,7 @@
         </div>
     </footer>
 
-    <!-- Bootstrap JS -->
+    <!--Bootstrap JS-->
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
     <script src="favoritos.js"></script>
     <script>
@@ -115,7 +115,7 @@
                 contenedor.appendChild(card);
             });
 
-            // Lógica para togglear el modo "Editar Lista"
+            //Lógica para togglear el modo "Editar Lista"
             const btnToggleEdit = document.getElementById("btnToggleEdit");
             let isEditMode = false;
             btnToggleEdit.addEventListener("click", () => {
@@ -129,7 +129,7 @@
                 });
             });
 
-            // Lógica para el buscador OMDB
+            //Lógica para el buscador OMDB
             const OMDB_API_KEY = "a3638a31";
             const searchBtn = document.getElementById("omdbSearchBtn");
             const searchInput = document.getElementById("omdbSearchInput");
@@ -164,11 +164,11 @@
                               formattedDate: data.Released && data.Released !== "N/A" ? new Date(data.Released).toISOString().split('T')[0] : (data.Year + "-01-01")
                           };
 
-                          // Añadir local si no está
+                          //Añadir local si no está
                           if (!isFavorite(movie.id)) {
                               toggleFavorite(movie);
                               
-                              // Recargar lista visual
+                              //Recargar lista visual
                               const newCard = createMovieCard(movie, false, true, true);
                               if (isEditMode) {
                                   newCard.querySelector(".edit-controls").style.display = "block";
@@ -179,7 +179,7 @@
                               searchResult.textContent = `'${movie.title}' añadida a tu lista. Guardando en base de datos...`;
                               searchResult.className = "search-result search-result--ok";
 
-                              // Llamada al PHP para guardar en DB
+                              //Llamada al PHP para guardar en DB
                               const formData = new FormData();
                               formData.append('titulo', data.Title);
                               formData.append('genero', data.Genre || 'Desconocido');
@@ -217,7 +217,7 @@
                       searchResult.className = "search-result search-result--error";
                   });
             });
-            }); // Cierre del fetch inicial
+            }); //Cierre del fetch inicial
         });
     </script>
 </body>

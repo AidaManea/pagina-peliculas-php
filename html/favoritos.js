@@ -1,4 +1,4 @@
-// Gestión de favoritos en localStorage y render de tarjetas
+//Gestión de favoritos en localStorage y render de tarjetas
 
 const FAVORITES_KEY = "filmoraFavorites";
 
@@ -48,7 +48,7 @@ function toggleSeen(movie) {
   }
   saveSeen(seen);
 
-  // Sincronizar con la BD (tabla vistas)
+  //Sincronizar con la BD (tabla vistas)
   const formData = new FormData();
   formData.append('title', movie.title);
   formData.append('genero', movie.genre || 'Desconocido');
@@ -64,7 +64,7 @@ function toggleSeen(movie) {
     body: formData,
     credentials: 'include'
   }).catch(() => {
-    // Si falla la llamada, mantenemos localStorage pero podrías mostrar un aviso
+    //Si falla la llamada, mantenemos localStorage pero podrías mostrar un aviso
     console.warn('No se pudo actualizar la película vista en la base de datos.');
   });
 }
@@ -87,7 +87,7 @@ function toggleFavorite(movie) {
   }
   saveFavorites(favs);
 
-  // Sincronizar con la BD (tabla favoritas)
+  //Sincronizar con la BD (tabla favoritas)
   const formData = new FormData();
   formData.append('title', movie.title);
   formData.append('genero', movie.genre || 'Desconocido');
@@ -111,7 +111,7 @@ function createMovieCard(movie, showFavs, showSeen, showEdit) {
   const card = document.createElement("article");
   card.className = "pelicula-card";
 
-  // Safely extract the image URL, discarding literal 'null' strings or missing values.
+  //Safely extract the image URL, discarding literal 'null' strings or missing values.
   let posterUrl = movie.image || movie.imagen || movie.Poster || movie.poster || movie.url_imagen || movie.movie_banner || "";
   if (posterUrl === "null" || posterUrl === "undefined" || posterUrl.trim() === "") {
       posterUrl = "";
@@ -158,7 +158,7 @@ function createMovieCard(movie, showFavs, showSeen, showEdit) {
      const btnDelete = editContainer.querySelector(".btn-delete");
      btnDelete.addEventListener("click", () => {
          toggleFavorite(movie);
-         card.remove(); // Elimina elemento del DOM
+         card.remove(); //Elimina elemento del DOM
          if (document.querySelectorAll('#listaFavoritas .pelicula-card').length === 0) {
              const vacia = document.getElementById("listaVacia");
              if (vacia) vacia.style.display = "block";

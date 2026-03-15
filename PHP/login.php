@@ -20,16 +20,17 @@ try {
     exit();
   }
 
-  // En la base de datos la tabla es "usuarios" y el campo de login es "usuario".
-  // Seleccionamos todo para no depender del nombre concreto de la columna ID.
-  // Validamos tanto usuario como email.
+  /* En la base de datos la tabla es "usuarios" y el campo de login es "usuario".
+    Seleccionamos todo para no depender del nombre concreto de la columna ID.
+    Validamos tanto usuario como email.
+  */ 
   $stmt = $conn->prepare("SELECT * FROM usuarios WHERE (usuario = :usuario OR nombre = :usuario) AND email = :email LIMIT 1");
   $stmt->bindParam(':usuario', $usernamePost);
   $stmt->bindParam(':email', $emailPost);
   $stmt->execute();
   $user = $stmt->fetch(PDO::FETCH_ASSOC);
 
-  // Usamos la contraseña tal y como está almacenada en la tabla
+  //Usamos la contraseña tal y como está almacenada en la tabla
   if (!$user || !isset($user['contraseña']) || $user['contraseña'] !== $passPost) {
     echo json_encode([
       'success' => false,
@@ -40,7 +41,7 @@ try {
 
   $_SESSION['usuario'] = $user['usuario'];
 
-  // Intentamos obtener el ID del usuario sin asumir un nombre fijo de columna
+  //Intentamos obtener el ID del usuario sin asumir un nombre fijo de columna
   $usuarioId = 0;
   if (isset($user['idusuario'])) {
     $usuarioId = (int) $user['idusuario'];

@@ -63,38 +63,6 @@
                     <input type="date" class="form-control" id="año" name="año">
                 </div>
             </div>
-
-            <div class="mb-3">
-                <label class="form-label">Valoración (Estrellas)</label>
-                <div class="star-radio-group">
-                    <div class="form-check">
-                        <input class="form-check-input" type="radio" name="valoracion" id="val1" value="1">
-                        <label class="form-check-label" for="val1">⭐</label>
-                    </div>
-                    <div class="form-check">
-                        <input class="form-check-input" type="radio" name="valoracion" id="val2" value="2">
-                        <label class="form-check-label" for="val2">⭐⭐</label>
-                    </div>
-                    <div class="form-check">
-                        <input class="form-check-input" type="radio" name="valoracion" id="val3" value="3">
-                        <label class="form-check-label" for="val3">⭐⭐⭐</label>
-                    </div>
-                    <div class="form-check">
-                        <input class="form-check-input" type="radio" name="valoracion" id="val4" value="4">
-                        <label class="form-check-label" for="val4">⭐⭐⭐⭐</label>
-                    </div>
-                    <div class="form-check">
-                        <input class="form-check-input" type="radio" name="valoracion" id="val5" value="5" checked>
-                        <label class="form-check-label" for="val5">⭐⭐⭐⭐⭐</label>
-                    </div>
-                </div>
-            </div>
-
-            <div class="mb-3">
-                <label for="descripcion" class="form-label">Descripción / Sinopsis</label>
-                <textarea class="form-control" id="descripcion" name="descripcion" rows="4" placeholder="Breve resumen de la película..."></textarea>
-            </div>
-
             <div class="text-end">
                 <button type="button" class="btn btn-secondary me-2" onclick="window.history.back()">Cancelar</button>
                 <button type="submit" class="btn btn-danger">Guardar Película</button>
@@ -113,7 +81,7 @@
                 errorBox.style.display = 'none';
                 successBox.style.display = 'none';
 
-                // validacion de formulario
+                //validacion de formulario
                 const titulo = document.getElementById('titulo').value.trim();
                 const director = document.getElementById('director').value.trim();
                 const genero = document.getElementById('genero').value;
@@ -133,7 +101,7 @@
                     return;
                 }
 
-                if (confirm(`¿Estás seguro que deseas añadir la película '${titulo}'?`)) {
+                if (confirm(`Estás seguro que deseas añadir la película '${titulo}'?`)) {
                     const formData = new FormData(form);
 
                     fetch('AñadirPelicula.php', {

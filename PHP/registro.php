@@ -23,8 +23,9 @@ try {
     exit();
   }
 
-  // Comprobar que no exista ya el usuario o el correo en la tabla "usuarios"
-  // No dependemos del nombre de la columna ID, solo queremos saber si hay alguna fila
+  /* Comprobar que no exista ya el usuario o el correo en la tabla "usuarios"
+     No dependemos del nombre de la columna ID, solo queremos saber si hay alguna fila
+  */
   $check = $conn->prepare("SELECT 1 FROM usuarios WHERE usuario = :usuario OR email = :email LIMIT 1");
   $check->bindParam(':usuario', $usuarioPost);
   $check->bindParam(':email', $emailPost);

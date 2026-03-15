@@ -43,9 +43,8 @@ document.addEventListener("DOMContentLoaded", () => {
   const grid = document.getElementById("gridRecomendados");
   if (!grid) return;
 
-  // Lista de pelis recomendadas "chulas"
+  //Lista de pelis recomendadas
   const recommendedTitles = [
-    // Animación y familiar
     "Coco",
     "Inside Out",
     "Toy Story",
@@ -72,7 +71,6 @@ document.addEventListener("DOMContentLoaded", () => {
     "Shrek",
     "Shrek 2",
     "The Lego Movie",
-    // Drama y premios
     "La La Land",
     "Whiplash",
     "The Social Network",
@@ -85,7 +83,6 @@ document.addEventListener("DOMContentLoaded", () => {
     "Slumdog Millionaire",
     "The Pursuit of Happyness",
     "A Beautiful Mind",
-    // Ciencia ficción / acción moderna
     "Mad Max: Fury Road",
     "Blade Runner 2049",
     "Arrival",
@@ -105,7 +102,6 @@ document.addEventListener("DOMContentLoaded", () => {
     "Prisoners",
     "No Country for Old Men",
     "There Will Be Blood",
-    // Terror y suspense
     "The Conjuring",
     "The Conjuring 2",
     "Insidious",
@@ -128,7 +124,7 @@ document.addEventListener("DOMContentLoaded", () => {
 
   Promise.all(requests)
     .then((results) => {
-      // Igual que en index: siempre mostramos una tarjeta por cada título recomendado.
+      //Igual que en index: siempre mostramos una tarjeta por cada título recomendado.
       todasLasPeliculas = recommendedTitles.map((title, index) => {
         const film = results[index];
 
@@ -166,7 +162,7 @@ document.addEventListener("DOMContentLoaded", () => {
           return movie;
         }
 
-        // Fallback simple si la API no devuelve nada
+        //Fallback simple si la API no devuelve nada
         return {
           id: title,
           title: title,

@@ -71,23 +71,23 @@
                 <div class="star-radio-group">
                     <div class="form-check">
                         <input class="form-check-input" type="radio" name="valoracion" id="val1" value="1">
-                        <label class="form-check-label" for="val1">⭐</label>
+                        <label class="form-check-label" for="val1"></label>
                     </div>
                     <div class="form-check">
                         <input class="form-check-input" type="radio" name="valoracion" id="val2" value="2">
-                        <label class="form-check-label" for="val2">⭐⭐</label>
+                        <label class="form-check-label" for="val2"></label>
                     </div>
                     <div class="form-check">
                         <input class="form-check-input" type="radio" name="valoracion" id="val3" value="3">
-                        <label class="form-check-label" for="val3">⭐⭐⭐</label>
+                        <label class="form-check-label" for="val3"></label>
                     </div>
                     <div class="form-check">
                         <input class="form-check-input" type="radio" name="valoracion" id="val4" value="4">
-                        <label class="form-check-label" for="val4">⭐⭐⭐⭐</label>
+                        <label class="form-check-label" for="val4"></label>
                     </div>
                     <div class="form-check">
                         <input class="form-check-input" type="radio" name="valoracion" id="val5" value="5">
-                        <label class="form-check-label" for="val5">⭐⭐⭐⭐⭐</label>
+                        <label class="form-check-label" for="val5"></label>
                     </div>
                 </div>
             </div>
@@ -110,15 +110,15 @@
             const errorBox = document.getElementById('errorBox');
             const successBox = document.getElementById('successBox');
 
-            // Cargar datos de la URL o sesión
+            //Cargar datos de la URL o sesión
             const params = new URLSearchParams(window.location.search);
             const movieId = params.get('id');
             const movieTitle = params.get('titulo');
 
             if (movieId) {
                 document.getElementById('movieId').value = movieId;
-                // Idealmente aquí se haría un fetch a getPelicula.php?id=... para cargar todos los datos.
-                // Simulamos cargar el título por ahora:
+                //Idealmente aquí se haría un fetch a getPelicula.php?id=... para cargar todos los datos.
+                //Simulamos cargar el título por ahora:
                 if (movieTitle) {
                     document.getElementById('titulo').value = movieTitle;
                     document.getElementById('tituloPagina').innerText = "Editar: " + movieTitle;
@@ -135,7 +135,7 @@
                 errorBox.style.display = 'none';
                 successBox.style.display = 'none';
 
-                // validacion de formulario
+                //validacion de formulario
                 const titulo = document.getElementById('titulo').value.trim();
                 const director = document.getElementById('director').value.trim();
                 const genero = document.getElementById('genero').value;

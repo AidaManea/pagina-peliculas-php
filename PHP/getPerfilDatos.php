@@ -18,7 +18,7 @@ try {
     $conn = new PDO("mysql:host=$servername;dbname=$dbname", $username, $password);
     $conn->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION);
 
-    // Datos básicos del usuario (buscamos por nombre de usuario para no depender del nombre de la columna ID)
+    //Datos básicos del usuario (buscamos por nombre de usuario para no depender del nombre de la columna ID)
     $stmtUser = $conn->prepare("SELECT * FROM usuarios WHERE usuario = :usuario LIMIT 1");
     $stmtUser->bindParam(':usuario', $usuarioNombre, PDO::PARAM_STR);
     $stmtUser->execute();
@@ -32,7 +32,7 @@ try {
         exit();
     }
 
-    // Obtenemos el ID del usuario para usarlo en las tablas favoritas / vistas
+    //Obtenemos el ID del usuario para usarlo en las tablas favoritas / vistas
     $usuarioId = 0;
     if (isset($user['idusuario'])) {
         $usuarioId = (int) $user['idusuario'];
@@ -44,7 +44,7 @@ try {
         $usuarioId = (int) $user['id'];
     }
 
-    // Contadores basados en las tablas favoritas y vistas
+    //Contadores basados en las tablas favoritas y vistas
     $totalFav = 0;
     $totalVista = 0;
 
@@ -56,7 +56,7 @@ try {
             $rowFav = $stmtFav->fetch(PDO::FETCH_ASSOC);
             $totalFav = (int) (isset($rowFav['total']) ? $rowFav['total'] : 0);
         } catch (PDOException $e) {
-            // Si la tabla no existe, simplemente dejamos el contador a 0
+            //Si la tabla no existe, simplemente dejamos el contador a 0
         }
 
         try {
@@ -66,7 +66,7 @@ try {
             $rowVista = $stmtVista->fetch(PDO::FETCH_ASSOC);
             $totalVista = (int) (isset($rowVista['total']) ? $rowVista['total'] : 0);
         } catch (PDOException $e) {
-            // Si la tabla no existe, simplemente dejamos el contador a 0
+            //Si la tabla no existe, simplemente dejamos el contador a 0
         }
     }
 

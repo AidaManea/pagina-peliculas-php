@@ -19,10 +19,10 @@ try {
     $conn = new PDO("mysql:host=$servername;dbname=$dbname", $username, $password);
     $conn->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION);
 
-    // Obtener información actual del usuario para validar
+    //Obtener información actual del usuario para validar
     $stmtUser = $conn->prepare("SELECT * FROM usuarios WHERE idusuario = :id LIMIT 1");
-    // Puede que la columna ID no sea idusuario, comprobamos varias opciones como en otros archivos
-    // Para simplificar aquí la buscaremos por el nombre de usuario de la sesión
+    //Puede que la columna ID no sea idusuario, comprobamos varias opciones como en otros archivos
+    //Para simplificar aquí la buscaremos por el nombre de usuario de la sesión
     $stmtUser = $conn->prepare("SELECT * FROM usuarios WHERE usuario = :usuario LIMIT 1");
     $stmtUser->bindParam(':usuario', $_SESSION['usuario']);
     $stmtUser->execute();
@@ -36,7 +36,7 @@ try {
          exit();
     }
 
-    // Buscamos cuál es el nombre real de la columna del id
+    //Buscamos cuál es el nombre real de la columna del id
     $idColName = '';
     if (isset($user['idusuario'])) {
         $idColName = 'idusuario';
@@ -68,7 +68,7 @@ try {
             exit();
         }
 
-        // Comprobamos que el nuevo email no esté en uso por OTRO usuario
+        //Comprobamos que el nuevo email no esté en uso por OTRO usuario
         if ($newEmail !== $user['email']) {
             $stmtCheck = $conn->prepare("SELECT 1 FROM usuarios WHERE email = :email LIMIT 1");
             $stmtCheck->bindParam(':email', $newEmail);
@@ -82,12 +82,13 @@ try {
             }
         }
 
-        // Actualizamos los datos
-        // Aseguramos que las columnas existen (nombre, email, usuario)
+        /*Actualizamos los datos
+        Aseguramos que las columnas existen (nombre, email, usuario)
+        */
         $updateStmt = $conn->prepare("UPDATE usuarios SET usuario = :usuario, email = :email, nombre = :nombre WHERE $idColName = :id");
         $updateStmt->bindParam(':usuario', $newUsuario);
         $updateStmt->bindParam(':email', $newEmail);
-        $updateStmt->bindParam(':nombre', $newUsuario); // Asumimos que "nombre" y "usuario" se mantiene igual para el display
+        $updateStmt->bindParam(':nombre', $newUsuario); //Asumimos que "nombre" y "usuario" se mantiene igual para el display
         $updateStmt->bindParam(':id', $user[$idColName], PDO::PARAM_INT);
         $updateStmt->execute();
 

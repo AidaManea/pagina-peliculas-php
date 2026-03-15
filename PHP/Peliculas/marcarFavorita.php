@@ -22,7 +22,7 @@ try {
     $conn = new PDO("mysql:host=$servername;dbname=$dbname", $username, $password);
     $conn->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION);
 
-    // Comprobar si ya está
+    //Comprobar si ya está
     $checkVista = $conn->prepare("SELECT idpelicula FROM favoritas WHERE titulo = :titulo LIMIT 1");
     $checkVista->bindParam(':titulo', $title);
     $checkVista->execute();
