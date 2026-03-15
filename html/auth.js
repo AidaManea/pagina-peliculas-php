@@ -1,133 +1,144 @@
-/**
- * Muestra un mensaje de error en el elemento DOM especificado.
- * @param {HTMLElement} element - El elemento donde se mostrará el error.
- * @param {string} message - El mensaje de error a mostrar.
- */
-function showError(element, message) {
-  if (!element) return;
-  element.textContent = message;
-  element.style.display = "block";
+// Estas funciones sirven para que el usuario sepa si ha escrito algo mal
+function enseñarError(elemento, mensaje) {
+  if (elemento) {
+    elemento.textContent = mensaje;
+    elemento.style.display = "block"; // Lo ponemos a la vista
+  }
 }
 
-/**
- * Limpia y oculta los mensajes de error de un elemento DOM.
- * @param {HTMLElement} element - El elemento a limpiar.
- */
-function clearError(element) {
-  if (!element) return;
-  element.textContent = "";
-  element.style.display = "none";
+function limpiarError(elemento) {
+  if (elemento) {
+    elemento.textContent = "";
+    elemento.style.display = "none"; // Lo escondemos de nuevo
+  }
 }
 
-/**
- * Verifica si un valor de entrada está vacío o contiene solo espacios.
- * @param {string} value - El texto a evaluar.
- * @returns {boolean} True si está vacío, false en caso contrario.
- */
-function isEmpty(value) {
-  return !value || value.trim().length === 0;
+// Una funcion sencilla para ver si el campo esta vacio
+function estaVacio(valor) {
+  return !valor || valor.trim().length === 0;
 }
 
-function isValidEmail(email) {
-  const re = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+// Aqui validamos el email con una "expresion regular", que es un poco lioso pero funciona
+function esEmailValido(email) {
+  var re = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
   return re.test(String(email).toLowerCase());
 }
 
-document.addEventListener("DOMContentLoaded", () => {
-  // Registro
-  const registroForm = document.getElementById("registroForm");
+document.addEventListener("DOMContentLoaded", function () {
+  
+  // --- PARTE DEL REGISTRO ---
+  var registroForm = document.getElementById("registroForm");
   if (registroForm) {
-    const nombre = document.getElementById("nombre");
-    const apellido = document.getElementById("apellido");
-    const usuario = document.getElementById("usuario");
-    const email = document.getElementById("email");
-    const pass = document.getElementById("pass");
-    const repPass = document.getElementById("rep-pass");
+    registroForm.addEventListener("submit", function (e) {
+      e.preventDefault(); // Evitamos que la pagina se recargue sola al darle al boton
 
-    registroForm.addEventListener("submit", (e) => {
-      e.preventDefault(); // Prevent default form submission
+      // Cogemos todos los inputs del formulario por su ID
+      var nombre = document.getElementById("nombre");
+      var apellido = document.getElementById("apellido");
+      var usuario = document.getElementById("usuario");
+      var email = document.getElementById("email");
+      var pass = document.getElementById("pass");
+      var repPass = document.getElementById("rep-pass");
 
-      if (isEmpty(nombre?.value) || isEmpty(apellido?.value) || isEmpty(usuario?.value) || isEmpty(email?.value) || isEmpty(pass?.value) || isEmpty(repPass?.value)) {
-        alert("Faltan datos por rellenar en el formulario.");
+      console.log("Intentando registrar a:", usuario.value);
+
+      // Comprobamos que el usuario no se haya dejado ningun campo en blanco
+      if (estaVacio(nombre.value) || estaVacio(apellido.value) || estaVacio(usuario.value) || 
+          estaVacio(email.value) || estaVacio(pass.value) || estaVacio(repPass.value)) {
+        alert("¡Oye! Tienes que rellenar todos los campos del formulario.");
         return;
       }
       
-      if (!isValidEmail(email.value)) {
-        alert("Por favor, introduce un correo electrónico válido.");
+      // Validamos que el email tenga un formato correcto
+      if (!esEmailValido(email.value)) {
+        alert("Parece que ese correo no es valido. Escribelo bien, porfa.");
         return;
       }
 
+      // Miramos que la contraseña sea la misma en los dos campos
       if (pass.value !== repPass.value) {
-        alert("Las contraseñas no coinciden.");
+        alert("Las contraseñas no coinciden. ¡Revisalo!");
         return;
       }
 
-      const formData = new FormData(registroForm);
+      // Creamos los datos para enviarlos al PHP
+      var datos = new FormData(registroForm);
 
-      // Use a cache-busting param just in case
-      fetch(`../PHP/registro.php?v=${Date.now()}`, {
+      // Hacemos la llamada al servidor
+      fetch("../PHP/registro.php", {
         method: "POST",
-        body: formData,
+        body: datos,
+        credentials: "include" // Importante para que se guarde la sesion
       })
-      .then(response => response.json())
-      .then(data => {
+      .then(function(res) { return res.json(); })
+      .then(function(data) {
         if (data.success) {
-          alert("¡Registro completado con éxito! Se te enviará al inicio.");
+          alert("¡Todo perfecto! Ya estas registrado. Vamos al inicio.");
           window.location.href = "index.html";
         } else {
-          alert(data.message || "Error al registrarse.");
-          // Si el usuario ya existe, redirigir al login según solicitado por el usuario.
-          if (data.message && data.message.includes("ya están registrados")) {
+          alert(data.message || "Algo ha fallado al intentar registrarte.");
+          // Si el usuario ya existe lo mandamos al login
+          if (data.message && data.message.indexOf("ya existen") !== -1) {
             window.location.href = "login.html";
           }
         }
       })
-      .catch(err => {
-        console.error("Error:", err);
-        alert("Ocurrió un error inesperado al contactar con el servidor.");
+      .catch(function(error) {
+        console.log("Error raro en el registro:", error);
+        alert("Parece que ha habido un error al conectar con el servidor.");
       });
     });
   }
 
-  // Login
-  const loginForm = document.getElementById("loginForm");
+  // --- PARTE DEL LOGIN ---
+  var loginForm = document.getElementById("loginForm");
   if (loginForm) {
-    const loginUser = document.getElementById("loginUser");
-    const loginEmail = document.getElementById("loginEmail");
-    const loginPass = document.getElementById("loginPass");
-    const errorBox = document.getElementById("loginError");
+    loginForm.addEventListener("submit", function (e) {
+      e.preventDefault(); // Que no se recargue la pagina todavia
+      
+      var errorBox = document.getElementById("loginError");
+      limpiarError(errorBox);
 
-    loginForm.addEventListener("submit", (e) => {
-      e.preventDefault(); // Prevent default form submission
-      clearError(errorBox);
+      // Pillamos los datos de acceso
+      var user = document.getElementById("loginUser");
+      var email = document.getElementById("loginEmail");
+      var pass = document.getElementById("loginPass");
 
-      if (isEmpty(loginUser?.value) || isEmpty(loginEmail?.value) || isEmpty(loginPass?.value)) {
-        showError(errorBox, "Introduce usuario, correo y contraseña.");
+      console.log("Pidiendo login para:", user.value);
+
+      // Validacion rapida antes de enviar nada
+      if (estaVacio(user.value) || estaVacio(email.value) || estaVacio(pass.value)) {
+        enseñarError(errorBox, "Tienes que poner el usuario, el correo y la contraseña.");
         return;
       }
       
-      if (!isValidEmail(loginEmail.value)) {
-        showError(errorBox, "Por favor, introduce un correo electrónico válido.");
+      if (!esEmailValido(email.value)) {
+        enseñarError(errorBox, "Ese correo electronico no parece valido.");
         return;
       }
 
-      const formData = new FormData(loginForm);
+      var datos = new FormData(loginForm);
 
-      fetch(`../PHP/login.php?v=${Date.now()}`, {
+      // Llamada al PHP de login
+      fetch("../PHP/login.php", {
         method: "POST",
-        body: formData,
+        body: datos,
+        credentials: "include" // Esto es clave para que no nos eche luego
       })
-      .then(response => response.json())
-      .then(data => {
+      .then(function(res) { return res.json(); })
+      .then(function(data) {
+        console.log("Respuesta del login:", data);
         if (data.success) {
+          // Si ha ido bien, nos vamos a la pagina principal
           window.location.href = "index.html";
         } else {
-          showError(errorBox, data.message || "Usuario o contraseña incorrectos.");
+          // Si no, enseñamos el mensaje que nos mande el PHP
+          enseñarError(errorBox, data.message || "Usuario o clave incorrectos.");
         }
       })
-      .catch(err => {
-        console.error("Error:", err);
-        showError(errorBox, "Ocurrió un error inesperado al contactar con el servidor.");
+      .catch(function(error) {
+        console.log("Error al intentar logearse:", error);
+        enseñarError(errorBox, "Vaya, parece que no puedo conectar con el servidor.");
       });
     });
   }

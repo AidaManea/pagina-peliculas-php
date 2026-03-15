@@ -1,77 +1,71 @@
 <?php
+// Este archivo lo usamos para traer los datos del usuario que esta logeado
+// Asi podemos enseñarlos en la pagina de perfil o en el menu.
+
 require('db.php');
 session_start();
 
 header('Content-Type: application/json; charset=utf-8');
 
+// Si no hay sesion, es que no se ha logeado o se ha caducado
 if (!isset($_SESSION['usuario'])) {
-    echo json_encode([
-        'success' => false,
-        'message' => 'Sesión no iniciada.'
-    ]);
+    echo json_encode(['success' => false, 'message' => 'No hay sesion activa ahora mismo.']);
     exit();
 }
 
-$usuarioNombre = $_SESSION['usuario'];
+// Sacamos el nombre de usuario de la sesion que guardamos en el login
+$nombreUsuario = $_SESSION['usuario'];
 
 try {
-    $conn = new PDO("mysql:host=$servername;dbname=$dbname", $username, $password);
-    $conn->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION);
+    $pdo = new PDO("mysql:host=$servername;dbname=$dbname", $username, $password);
+    
+    // Vamos a buscar toda la info del usuario en la tabla
+    $sql = "SELECT * FROM usuarios WHERE usuario = ? LIMIT 1";
+    $stmt = $pdo->prepare($sql);
+    $stmt->execute([$nombreUsuario]);
+    $usuario = $stmt->fetch(PDO::FETCH_ASSOC);
 
-    // Datos básicos del usuario (buscamos por nombre de usuario para no depender del nombre de la columna ID)
-    $stmtUser = $conn->prepare("SELECT * FROM usuarios WHERE usuario = :usuario LIMIT 1");
-    $stmtUser->bindParam(':usuario', $usuarioNombre, PDO::PARAM_STR);
-    $stmtUser->execute();
-    $user = $stmtUser->fetch(PDO::FETCH_ASSOC);
-
-    if (!$user) {
-        echo json_encode([
-            'success' => false,
-            'message' => 'No se han encontrado datos del usuario.'
-        ]);
+    // Por si acaso, si no lo encuentra (raro si hay sesion, pero bueno)
+    if (!$usuario) {
+        echo json_encode(['success' => false, 'message' => 'Vaya, no encuentro al usuario en la base de datos.']);
         exit();
     }
 
-    // Obtenemos el ID del usuario para usarlo en las tablas favoritas / vistas
-    $usuarioId = 0;
-    if (isset($user['idusuario'])) {
-        $usuarioId = (int) $user['idusuario'];
-    } elseif (isset($user['idUsuario'])) {
-        $usuarioId = (int) $user['idUsuario'];
-    } elseif (isset($user['id'])) {
-        $usuarioId = (int) $user['id'];
+    // El ID es muy importante para luego buscar sus pelis. 
+    // Lo sacamos probando varios nombres de columna por si acaso.
+    $id = 0;
+    if (isset($usuario['idusuario'])) $id = (int)$usuario['idusuario'];
+    else if (isset($usuario['idUsuario'])) $id = (int)$usuario['idUsuario'];
+    else if (isset($usuario['id'])) $id = (int)$usuario['id'];
+
+    // Vamos a ver cuantas pelis tiene el usuario en favoritos y vistas
+    $totalFavoritas = 0;
+    $totalVistas = 0;
+
+    if ($id > 0) {
+        // Buscamos cuantas filas hay en la tabla de favoritas para este ID
+        $resFav = $pdo->prepare("SELECT COUNT(*) FROM favoritas WHERE idusuario = ?");
+        $resFav->execute([$id]);
+        $totalFavoritas = (int)$resFav->fetchColumn();
+
+        // Lo mismo para las pelis que ha marcado como vistas
+        $resVis = $pdo->prepare("SELECT COUNT(*) FROM vistas WHERE idusuario = ?");
+        $resVis->execute([$id]);
+        $totalVistas = (int)$resVis->fetchColumn();
     }
 
-    // Contadores basados en las tablas favoritas y vistas
-    $totalFav = 0;
-    $totalVista = 0;
-
-    if ($usuarioId > 0) {
-        $stmtFav = $conn->prepare("SELECT COUNT(*) AS total FROM favoritas WHERE idusuario = :id");
-        $stmtFav->bindParam(':id', $usuarioId, PDO::PARAM_INT);
-        $stmtFav->execute();
-        $rowFav = $stmtFav->fetch(PDO::FETCH_ASSOC);
-
-        $stmtVista = $conn->prepare("SELECT COUNT(*) AS total FROM vistas WHERE idusuario = :id");
-        $stmtVista->bindParam(':id', $usuarioId, PDO::PARAM_INT);
-        $stmtVista->execute();
-        $rowVista = $stmtVista->fetch(PDO::FETCH_ASSOC);
-
-        $totalFav = (int) ($rowFav['total'] ?? 0);
-        $totalVista = (int) ($rowVista['total'] ?? 0);
-    }
-
+    // Devolvemos todo al JavaScript para que lo pinte en la web
     echo json_encode([
-        'success'        => true,
-        'usuario'        => $user['usuario'],
-        'email'          => $user['email'] ?? '',
-        'totalFavoritas' => $totalFav,
-        'totalVistas'    => $totalVista,
+        'success' => true,
+        'usuario' => $usuario['usuario'],
+        'email' => isset($usuario['email']) ? $usuario['email'] : '',
+        'totalFavoritas' => $totalFavoritas,
+        'totalVistas' => $totalVistas
     ]);
-} catch (PDOException $e) {
-    echo json_encode([
-        'success' => false,
-        'message' => 'Error al obtener los datos del perfil.'
-    ]);
+
+} catch (Exception $e) {
+    // Si algo explota enviamos este error
+    echo json_encode(['success' => false, 'message' => 'Error al intentar cargar los datos del perfil.']);
 }
+?>
 

@@ -1,81 +1,65 @@
 <?php
+// Este archivo sirve para crear una cuenta nueva en Filmora.
+// Pide los datos al usuario y los mete en la base de datos.
+
 require('db.php');
 
+// Cabecera para que el navegador sepa que le mandamos un JSON
 header('Content-Type: application/json; charset=utf-8');
 
 try {
-  $conn = new PDO("mysql:host=$servername;dbname=$dbname", $username, $password);
-  $conn->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION);
+  // Conectamos a la DB usando las variables de db.php
+  $pdo = new PDO("mysql:host=$servername;dbname=$dbname", $username, $password);
+  $pdo->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION);
 
-  $nombrePost = isset($_POST['user']) ? trim($_POST['user']) : '';
-  $apellidoPost = isset($_POST['apellido']) ? trim($_POST['apellido']) : '';
-  $usuarioPost = isset($_POST['usuario']) ? trim($_POST['usuario']) : '';
-  $emailPost = isset($_POST['email']) ? trim($_POST['email']) : '';
-  $numTelefonoPost = isset($_POST['numTelefono']) ? trim($_POST['numTelefono']) : '0';
-  $fechaNacimientoPost = isset($_POST['fechaNacimiento']) ? trim($_POST['fechaNacimiento']) : '2000-01-01';
-  $passPost = isset($_POST['pass']) ? $_POST['pass'] : '';
+  // Aqui pillamos todo lo que nos llega desde el formulario de registro (auth.js)
+  // He usado los nombres que pusimos en los inputs
+  $nombre = isset($_POST['user']) ? trim($_POST['user']) : '';
+  $apellido = isset($_POST['apellido']) ? trim($_POST['apellido']) : '';
+  $usuario = isset($_POST['usuario']) ? trim($_POST['usuario']) : '';
+  $email = isset($_POST['email']) ? trim($_POST['email']) : '';
+  $telefono = isset($_POST['numTelefono']) ? trim($_POST['numTelefono']) : '0';
+  $fecha = isset($_POST['fechaNacimiento']) ? trim($_POST['fechaNacimiento']) : '2000-01-01';
+  $pass = isset($_POST['pass']) ? $_POST['pass'] : '';
 
-  if ($nombrePost === '' || $apellidoPost === '' || $usuarioPost === '' || $emailPost === '' || $passPost === '') {
-    echo json_encode([
-      'success' => false,
-      'message' => 'Faltan datos por rellenar en el formulario.'
-    ]);
+  // Miramos que no se deje lo mas importante vacio
+  if ($nombre == '' || $usuario == '' || $email == '' || $pass == '') {
+    echo json_encode(['success' => false, 'message' => '¡Oye! Faltan datos obligatorios para el registro.']);
     exit();
   }
 
-  // Comprobar que no exista ya el usuario o el correo en la tabla "usuarios"
-  // No dependemos del nombre de la columna ID, solo queremos saber si hay alguna fila
-  $check = $conn->prepare("SELECT 1 FROM usuarios WHERE usuario = :usuario OR email = :email LIMIT 1");
-  $check->bindParam(':usuario', $usuarioPost);
-  $check->bindParam(':email', $emailPost);
-  $check->execute();
+  // Primero tenemos que mirar si el nombre de usuario o el email ya estan pillados por otro
+  // No queremos tener dos personas con el mismo nombre de usuario.
+  $sql_check = "SELECT * FROM usuarios WHERE usuario = ? OR email = ? LIMIT 1";
+  $stmt_check = $pdo->prepare($sql_check);
+  $stmt_check->execute([$usuario, $email]);
 
-  if ($check->fetch(PDO::FETCH_ASSOC)) {
-    echo json_encode([
-      'success' => false,
-      'message' => 'El usuario o el email ya están registrados.'
-    ]);
+  if ($stmt_check->fetch()) {
+    echo json_encode(['success' => false, 'message' => 'Vaya, el usuario o el email ya estan registrados. Prueba con otro.']);
     exit();
   }
 
-  $stmt = $conn->prepare(
-    "INSERT INTO usuarios (nombre, email, contraseña, usuario, apellido, numTelefono, fechaNacimiento)
-     VALUES (:nombre, :email, :contrasena, :usuario, :apellido, :telefono, :fechaNac)"
-  );
-
-  $stmt->bindParam(':nombre', $nombrePost);
-  $stmt->bindParam(':email', $emailPost);
-  $stmt->bindParam(':contrasena', $passPost);
-  $stmt->bindParam(':usuario', $usuarioPost);
-  $stmt->bindParam(':apellido', $apellidoPost);
-  $stmt->bindParam(':telefono', $numTelefonoPost, PDO::PARAM_INT);
-  $stmt->bindParam(':fechaNac', $fechaNacimientoPost);
-
-  $stmt->execute();
+  // Si todo esta bien, insertamos al nuevo usuario en la tabla
+  $sql_insert = "INSERT INTO usuarios (nombre, email, contraseña, usuario, apellido, numTelefono, fechaNacimiento)
+                 VALUES (?, ?, ?, ?, ?, ?, ?)";
+  $stmt_insert = $pdo->prepare($sql_insert);
+  $stmt_insert->execute([$nombre, $email, $pass, $usuario, $apellido, $telefono, $fecha]);
   
-  // Start session and log user in immediately after registration
+  // Lo logeamos directamente para que no tenga que hacerlo el despues.
+  // Iniciamos la sesion.
   session_start();
-  $_SESSION['usuario'] = $usuarioPost;
+  $_SESSION['usuario'] = $usuario;
+  $_SESSION['usuario_id'] = (int)$pdo->lastInsertId();
+  $_SESSION['usuario_email'] = $email;
   
-  // Try to get the newly created user ID
-  $userId = $conn->lastInsertId();
-  $_SESSION['usuario_id'] = (int) $userId;
-  $_SESSION['usuario_email'] = $emailPost;
-  
-  // Set cookie for consistency with login.php
-  setcookie('usuario', $usuarioPost, time() + (86400 * 30), "/");
+  // Guardamos una cookie por si acaso se cierra el navegador pronto
+  setcookie('usuario', $usuario, time() + (86400 * 30), "/");
 
-  echo json_encode([
-    'success' => true,
-    'message' => 'Usuario registrado correctamente.'
-  ]);
-} catch(PDOException $e) {
-  echo json_encode([
-    'success' => false,
-    // Durante el desarrollo mostramos el mensaje real para poder ver qué está fallando.
-    'message' => $e->getMessage()
-  ]);
+  // Respuesta de que todo ha ido perfecto
+  echo json_encode(['success' => true, 'message' => '¡Usuario registrado con éxito! Bienvenido.']);
+
+} catch(Exception $e) {
+  // Si algo falla soltamos el error
+  echo json_encode(['success' => false, 'message' => 'Hubo un error raro: ' . $e->getMessage()]);
 }
-
-$conn = null;
-?>
+?>

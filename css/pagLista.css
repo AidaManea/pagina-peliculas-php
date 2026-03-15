@@ -116,28 +116,22 @@ nav h2 {
 
 .btn-toggle-edit {
     padding: 7px 18px;
-    border-radius: 999px;
-    border: 1px solid rgba(255, 255, 255, 0.75);
-    background: rgba(30, 30, 30, 0.15);
-    color: #ffffff;
+    border-radius: 5px;
+    border: 1px solid #ccc;
+    background: #444;
+    color: #fff;
     font-size: 13px;
-    font-weight: 600;
-    letter-spacing: 0.03em;
-    text-transform: uppercase;
     cursor: pointer;
-    transition: background 0.15s, color 0.15s, box-shadow 0.15s, border-color 0.15s;
 }
 
 .btn-toggle-edit:hover {
-    background: rgba(0, 0, 0, 0.3);
-    box-shadow: 0 0 0 1px rgba(255, 255, 255, 0.4);
+    background: #666;
 }
 
 .btn-toggle-edit.is-active {
-    background: #16a34a;
-    border-color: transparent;
-    color: #f8fafc;
-    box-shadow: 0 0 0 1px rgba(22, 163, 74, 0.8);
+    background: #4c1d95;
+    border-color: #4c1d95;
+    color: #fff;
 }
 
 /* ── Buscador OMDB ── */
@@ -145,7 +139,7 @@ nav h2 {
     margin-top: 10px;
     padding: 14px 16px 16px;
     border-radius: 16px;
-    background: rgba(11, 15, 25, 0.9);
+    background: rgba(225, 198, 255, 0.9);
     border: 1px solid rgba(148, 163, 184, 0.55);
     text-align: left;
 }
@@ -191,20 +185,16 @@ nav h2 {
 
 .search-button {
     padding: 9px 18px;
-    border-radius: 999px;
+    border-radius: 5px;
     border: none;
-    background: linear-gradient(135deg, #fb7185, #e11d48);
-    color: #fdf2f8;
+    background: #7e22ce;
+    color: #fff;
     font-size: 13px;
-    font-weight: 600;
     cursor: pointer;
-    white-space: nowrap;
-    transition: transform 0.15s, box-shadow 0.15s, background 0.15s;
 }
 
 .search-button:hover {
-    transform: translateY(-1px);
-    box-shadow: 0 8px 18px rgba(248, 113, 113, 0.5);
+    background: #6b21a8;
 }
 
 .search-result {
@@ -308,7 +298,7 @@ nav h2 {
     border: none;
     background: rgba(15, 15, 15, 0.6);
     backdrop-filter: blur(4px);
-    color: #fbbf24;
+    color: #fb24e9;
     display: flex;
     align-items: center;
     justify-content: center;
@@ -327,9 +317,9 @@ nav h2 {
 }
 
 .btn-fav.active {
-    background: #f59e0b;
+    background: #ff7eea;
     color: #111827;
-    box-shadow: 0 0 0 1px rgba(248, 180, 0, 0.9);
+    box-shadow: 0 0 0 1px rgba(131, 54, 127, 0.9);
 }
 
 .btn-seen {
@@ -352,13 +342,13 @@ nav h2 {
 
 .btn-seen:hover {
     transform: translateY(-1px);
-    border-color: #22c55e;
+    border-color: #c522c5;
 }
 
 .btn-seen.active {
-    background: #22c55e;
-    border-color: #166534;
-    color: #022c22;
+    background: #c72591;
+    border-color: #a1166c;
+    color: #571258;
 }
 
 /* ── Controles de edición en "Mi lista" ── */
@@ -371,20 +361,16 @@ nav h2 {
     width: 100%;
     text-align: center;
     padding: 7px 10px;
-    border-radius: 9px;
+    border-radius: 5px;
     border: none;
-    background: #dc2626;
-    color: #fef2f2;
+    background: #ef4444; /* Rojo normal */
+    color: #fff;
     font-size: 13px;
-    font-weight: 600;
     cursor: pointer;
-    transition: background 0.15s, transform 0.1s, box-shadow 0.1s;
 }
 
 .edit-controls .btn-delete:hover {
-    background: #b91c1c;
-    transform: translateY(-1px);
-    box-shadow: 0 5px 14px rgba(185, 28, 28, 0.5);
+    background: #dc2626; 
 }
 
 /* ── Empty state ── */

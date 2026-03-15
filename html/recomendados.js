@@ -33,7 +33,7 @@ function renderRecomendados() {
   }
 
   listaFiltrada.forEach((movie) => {
-    const card = createMovieCard(movie, { showFavoriteButton: true, showSeenButton: true });
+    const card = createMovieCard(movie, true, true, false);
     grid.appendChild(card);
   });
 }
@@ -96,9 +96,19 @@ document.addEventListener("DOMContentLoaded", () => {
 
   Promise.all(requests)
     .then((results) => {
-      const valid = results.filter(Boolean);
+      const valid = [];
+      for (let i = 0; i < results.length; i++) {
+        if (results[i] !== null) {
+          valid.push(results[i]);
+        }
+      }
 
       todasLasPeliculas = valid.map((film) => {
+        let fdate = film.Year + "-01-01";
+        if (film.Released && film.Released !== "N/A") {
+            fdate = new Date(film.Released).toISOString().split('T')[0];
+        }
+
         const movie = {
           id: film.imdbID,
           title: film.Title,
@@ -106,12 +116,11 @@ document.addEventListener("DOMContentLoaded", () => {
           director: film.Director || "",
           image: film.Poster !== "N/A" ? film.Poster : "",
           movie_banner: "",
-          // Extend fields properties for favoritism logic
           genre: film.Genre || "Desconocido",
           duration: parseInt((film.Runtime || "").replace(" min", "")) || 0,
           description: film.Plot || "Sin descripción",
           rating: parseFloat(film.imdbRating) || 0,
-          formattedDate: film.Released && film.Released !== "N/A" ? new Date(film.Released).toISOString().split('T')[0] : (film.Year + "-01-01")
+          formattedDate: fdate
         };
 
         const formData = new FormData();

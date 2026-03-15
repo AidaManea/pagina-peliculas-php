@@ -130,122 +130,112 @@
     <!-- Bootstrap JS -->
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
     <script>
-        document.addEventListener("DOMContentLoaded", () => {
+        document.addEventListener("DOMContentLoaded", function () {
+            // pedimos los datos de nuestro perfil al servidor
             fetch("../PHP/getPerfilDatos.php", {
                 method: "GET",
                 credentials: "include"
             })
-                .then((res) => res.json())
-                .then((data) => {
+                .then(function (res) { return res.json(); })
+                .then(function (data) {
                     if (!data.success) {
+                        // si no estamos logeados nos saca al login
                         window.location.href = "login.html";
                         return;
                     }
 
-                    const nombreEl = document.querySelector(".perfil-nombre");
-                    const emailEl = document.querySelector(".perfil-email");
-                    const miListaEl = document.getElementById("perfilMiLista");
-                    const vistasEl = document.getElementById("perfilVistas");
+                    var nombreEl = document.querySelector(".perfil-nombre");
+                    var emailEl = document.querySelector(".perfil-email");
+                    var miListaEl = document.getElementById("perfilMiLista");
+                    var vistasEl = document.getElementById("perfilVistas");
                     
-                    const inputNombre = document.getElementById("perfilNombre");
-                    const inputEmail = document.getElementById("perfilEmail");
+                    var inputNombre = document.getElementById("perfilNombre");
+                    var inputEmail = document.getElementById("perfilEmail");
 
                     if (nombreEl) nombreEl.textContent = data.usuario || "Usuario";
                     if (emailEl) emailEl.textContent = data.email || "";
-                    if (miListaEl) miListaEl.textContent = data.totalFavoritas ?? 0;
-                    if (vistasEl) vistasEl.textContent = data.totalVistas ?? 0;
+                    if (miListaEl) miListaEl.textContent = data.totalFavoritas || 0;
+                    if (vistasEl) vistasEl.textContent = data.totalVistas || 0;
                     
                     if (inputNombre) inputNombre.value = data.usuario || "";
                     if (inputEmail) inputEmail.value = data.email || "";
                 })
-                .catch(() => {
-                    // Si falla la llamada simplemente dejamos los valores por defecto
+                .catch(function () {
+                    console.log("Error al cargar datos del perfil");
                 });
                 
-            const formDatos = document.getElementById("formDatos");
+            var formDatos = document.getElementById("formDatos");
             if (formDatos) {
-                formDatos.addEventListener("submit", (e) => {
+                formDatos.addEventListener("submit", function (e) {
                     e.preventDefault();
-                    const formData = new FormData(formDatos);
-                    formData.append("action", "updateDatos");
+                    var datos = new FormData(formDatos);
+                    datos.append("action", "updateDatos");
                     
-                    const errorBox = document.getElementById("datosError");
-                    const successBox = document.getElementById("datosSuccess");
+                    var errorBox = document.getElementById("datosError");
+                    var successBox = document.getElementById("datosSuccess");
                     errorBox.style.display = "none";
                     successBox.style.display = "none";
 
                     fetch("../PHP/updatePerfil.php", {
                         method: "POST",
-                        body: formData
+                        body: datos
                     })
-                    .then(res => res.json())
-                    .then(data => {
+                    .then(function (res) { return res.json(); })
+                    .then(function (data) {
                         if(data.success) {
                             successBox.textContent = data.message;
                             successBox.style.display = "block";
-                            const nombreEl = document.querySelector(".perfil-nombre");
-                            const emailEl = document.querySelector(".perfil-email");
-                            if (nombreEl) nombreEl.textContent = document.getElementById("perfilNombre").value;
-                            if (emailEl) emailEl.textContent = document.getElementById("perfilEmail").value;
                             alert("¡Datos actualizados con éxito!");
                         } else {
                             errorBox.textContent = data.message;
                             errorBox.style.display = "block";
-                            alert("Error: " + data.message);
                         }
                     })
-                    .catch(err => {
-                        errorBox.textContent = "Error de conexión al servidor.";
-                        errorBox.style.display = "block";
-                        alert("Error de conexión al servidor.");
+                    .catch(function (err) {
+                        alert("Error de conexión");
                     });
                 });
             }
 
-            const formPassword = document.getElementById("formPassword");
+            var formPassword = document.getElementById("formPassword");
             if (formPassword) {
-                formPassword.addEventListener("submit", (e) => {
+                formPassword.addEventListener("submit", function (e) {
                     e.preventDefault();
                     
-                    const newPass = document.getElementById("newPass").value;
-                    const repNewPass = document.getElementById("repNewPass").value;
+                    var newPass = document.getElementById("newPass").value;
+                    var repNewPass = document.getElementById("repNewPass").value;
                     
-                    const errorBox = document.getElementById("passError");
-                    const successBox = document.getElementById("passSuccess");
+                    var errorBox = document.getElementById("passError");
+                    var successBox = document.getElementById("passSuccess");
                     errorBox.style.display = "none";
                     successBox.style.display = "none";
                     
                     if (newPass !== repNewPass) {
-                         errorBox.textContent = "Las contraseñas nuevas no coinciden.";
-                         errorBox.style.display = "block";
                          alert("Las contraseñas nuevas no coinciden.");
                          return;
                     }
 
-                    const formData = new FormData(formPassword);
-                    formData.append("action", "updatePassword");
+                    var datos = new FormData(formPassword);
+                    datos.append("action", "updatePassword");
 
                     fetch("../PHP/updatePerfil.php", {
                         method: "POST",
-                        body: formData
+                        body: datos
                     })
-                    .then(res => res.json())
-                    .then(data => {
+                    .then(function (res) { return res.json(); })
+                    .then(function (data) {
                         if(data.success) {
                             successBox.textContent = data.message;
                             successBox.style.display = "block";
                             formPassword.reset();
-                            alert("¡Contraseña actualizada con éxito!");
+                            alert("¡Contraseña actualizada!");
                         } else {
                             errorBox.textContent = data.message;
                             errorBox.style.display = "block";
-                            alert("Error: " + data.message);
                         }
                     })
-                    .catch(err => {
-                        errorBox.textContent = "Error de conexión al servidor.";
-                        errorBox.style.display = "block";
-                        alert("Error de conexión al servidor.");
+                    .catch(function (err) {
+                        alert("Error al actualizar contraseña");
                     });
                 });
             }

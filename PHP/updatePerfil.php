@@ -13,7 +13,7 @@ if (!isset($_SESSION['usuario']) || !isset($_SESSION['usuario_id'])) {
 }
 
 $usuarioId = (int) $_SESSION['usuario_id'];
-$action = $_POST['action'] ?? '';
+$action = isset($_POST['action']) ? $_POST['action'] : '';
 
 try {
     $conn = new PDO("mysql:host=$servername;dbname=$dbname", $username, $password);
@@ -40,6 +40,8 @@ try {
     $idColName = '';
     if (isset($user['idusuario'])) {
         $idColName = 'idusuario';
+    } elseif (isset($user['idUsuarios'])) {
+        $idColName = 'idUsuarios';
     } elseif (isset($user['idUsuario'])) {
         $idColName = 'idUsuario';
     } elseif (isset($user['id'])) {
@@ -55,8 +57,8 @@ try {
     }
 
     if ($action === 'updateDatos') {
-        $newUsuario = trim($_POST['usuario'] ?? '');
-        $newEmail = trim($_POST['email'] ?? '');
+        $newUsuario = trim(isset($_POST['usuario']) ? $_POST['usuario'] : '');
+        $newEmail = trim(isset($_POST['email']) ? $_POST['email'] : '');
 
         if ($newUsuario === '' || $newEmail === '') {
             echo json_encode([
@@ -101,8 +103,8 @@ try {
         exit();
 
     } elseif ($action === 'updatePassword') {
-        $oldPass = $_POST['oldPass'] ?? '';
-        $newPass = $_POST['newPass'] ?? '';
+        $oldPass = isset($_POST['oldPass']) ? $_POST['oldPass'] : '';
+        $newPass = isset($_POST['newPass']) ? $_POST['newPass'] : '';
 
         if ($oldPass === '' || $newPass === '') {
             echo json_encode([

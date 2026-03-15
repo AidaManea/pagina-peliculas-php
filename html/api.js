@@ -1,85 +1,81 @@
-const OMDB_API_KEY = "b5ae98fe";
+// --- CONEXION CON LA API DE OMDB ---
+// Aqui es donde traemos las pelis de internet para que la web no este vacia al principio.
 
-document.addEventListener("DOMContentLoaded", () => {
-  const grid = document.querySelector(".peliculas-grid");
-  if (!grid) return;
+var CLAVE_API = "b5ae98fe";
 
+document.addEventListener("DOMContentLoaded", function() {
+  
+  // Buscamos donde vamos a meter las pelis
+  var grid = document.querySelector(".peliculas-grid");
+  if (!grid) {
+    return; // Si no estamos en la pagina que tiene el grid, nos salimos
+  }
+
+  // Vaciamos el contenedor por si acaso tiene algo
   grid.innerHTML = "";
 
-  // Lista de pelis muy conocidas
-  const popularTitles = [
-    "Inception",
-    "The Dark Knight",
-    "Interstellar",
-    "Pulp Fiction",
-    "The Matrix",
-    "Fight Club",
-    "Forrest Gump",
-    "The Lord of the Rings: The Fellowship of the Ring",
-    "Avengers: Endgame",
-    "Titanic",
-    "The Shawshank Redemption",
-    "Star Wars",
-    "The Godfather",
-    "The Godfather: Part II",
-    "Gladiator",
-    "Jurassic Park",  
-    "The Lion King",
-    "Pirates of the Caribbean: The Curse of the Black Pearl",
-    "The Avengers",
-    "Guardians of the Galaxy",
-    "Spider-Man: No Way Home"
+  // Lista de pelis que queremos que aparezcan al principio
+  var titulos = [
+    "Inception", "The Dark Knight", "Interstellar", "Pulp Fiction",
+    "The Matrix", "Fight Club", "Forrest Gump", "Titanic", "Gladiator",
+    "Jurassic Park", "The Lion King", "Avengers: Endgame"
   ];
 
-  const requests = popularTitles.map((title) =>
-    fetch(`https://www.omdbapi.com/?apikey=${OMDB_API_KEY}&type=movie&t=${encodeURIComponent(title)}`)
-      .then((res) => res.json())
-      .then((data) => (data && data.Response === "True" ? data : null))
-      .catch(() => null)
-  );
+  console.log("Cargando peliculas populares desde OMDB...");
 
-  Promise.all(requests)
-    .then((results) => {
-      const valid = results.filter(Boolean);
+  // Recorremos la lista y pedimos cada una a la API
+  for (var i = 0; i < titulos.length; i++) {
+    var tituloActual = titulos[i];
+    
+    // Usamos fetch para llamar a OMDB
+    fetch("https://www.omdbapi.com/?apikey=" + CLAVE_API + "&type=movie&t=" + encodeURIComponent(tituloActual))
+      .then(function(res) { return res.json(); })
+      .then(function(data) {
+        if (data && data.Response === "True") {
+          
+          // Formateamos un poco la fecha porque la DB es tiquismiquis con eso
+          var anio = data.Year + "-01-01";
+          if (data.Released && data.Released !== "N/A") {
+              anio = new Date(data.Released).toISOString().split('T')[0];
+          }
 
-      if (!valid.length) {
-        grid.innerHTML = "<p>No se han podido cargar las películas ahora mismo.</p>";
-        return;
-      }
+          // Creamos un objeto ordenado con los datos que nos interesan
+          var peliObj = {
+            id: data.imdbID,
+            title: data.Title,
+            release_date: data.Year,
+            director: data.Director || "",
+            image: data.Poster !== "N/A" ? data.Poster : "",
+            genre: data.Genre || "Desconocido",
+            duration: parseInt((data.Runtime || "").replace(" min", "")) || 0,
+            description: data.Plot || "Sin descripción",
+            rating: parseFloat(data.imdbRating) || 0,
+            formattedDate: anio
+          };
 
-      valid.forEach((film) => {
-        const movie = {
-          id: film.imdbID,
-          title: film.Title,
-          release_date: film.Year,
-          director: film.Director || "",
-          image: film.Poster !== "N/A" ? film.Poster : "",
-          movie_banner: "",
-          // Extend fields properties for favoritism logic
-          genre: film.Genre || "Desconocido",
-          duration: parseInt((film.Runtime || "").replace(" min", "")) || 0,
-          description: film.Plot || "Sin descripción",
-          rating: parseFloat(film.imdbRating) || 0,
-          formattedDate: film.Released && film.Released !== "N/A" ? new Date(film.Released).toISOString().split('T')[0] : (film.Year + "-01-01")
-        };
+          // Tambien la guardamos en nuestra base de datos por si la necesitamos luego
+          var datosForm = new FormData();
+          datosForm.append('titulo', peliObj.title);
+          datosForm.append('genero', peliObj.genre);
+          datosForm.append('duracion', peliObj.duration);
+          datosForm.append('descripcion', peliObj.description);
+          datosForm.append('año', peliObj.formattedDate);
+          datosForm.append('director', peliObj.director);
+          datosForm.append('valoracion', peliObj.rating);
 
-        const formData = new FormData();
-        formData.append('titulo', movie.title);
-        formData.append('genero', movie.genre);
-        formData.append('duracion', movie.duration);
-        formData.append('descripcion', movie.description);
-        formData.append('año', movie.formattedDate);
-        formData.append('director', movie.director);
-        formData.append('valoracion', movie.rating);
+          // Llamamos al PHP que guarda las pelis
+          fetch('../PHP/Peliculas/apiGuardarPelicula.php', { method: 'POST', body: datosForm })
+            .catch(function() { 
+              console.log("No se pudo guardar " + peliObj.title + " en nuestra DB"); 
+            });
 
-        fetch('../PHP/Peliculas/apiGuardarPelicula.php', { method: 'POST', body: formData }).catch(e => console.error(e));
-
-        const card = createMovieCard(movie, { showFavoriteButton: true, showSeenButton: true });
-        grid.appendChild(card);
+          // Usamos la funcion que esta en favoritos.js para crear la tarjetita
+          var card = createMovieCard(peliObj, true, true, false);
+          grid.appendChild(card);
+        }
+      })
+      .catch(function(err) {
+        console.error("Vaya, parece que la API de OMDB ha fallado:", err);
       });
-    })
-    .catch((err) => {
-      console.error("Error al cargar la API de películas", err);
-      grid.innerHTML = "<p>No se han podido cargar las películas ahora mismo.</p>";
-    });
+  }
 });

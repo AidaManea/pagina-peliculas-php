@@ -6,12 +6,12 @@ try {
     $conn = new PDO("mysql:host=$servername;dbname=$dbname", $username, $password);
     $conn->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION);
 
-    $titulo = $_POST['titulo'] ?? '';
-    $genero = $_POST['genero'] ?? '';
+    $titulo = isset($_POST['titulo']) ? $_POST['titulo'] : '';
+    $genero = isset($_POST['genero']) ? $_POST['genero'] : '';
     $duracion = isset($_POST['duracion']) ? (int)$_POST['duracion'] : 0;
-    $descripcion = $_POST['descripcion'] ?? '';
-    $ano = $_POST['año'] ?? '';
-    $director = $_POST['director'] ?? '';
+    $descripcion = isset($_POST['descripcion']) ? $_POST['descripcion'] : '';
+    $ano = isset($_POST['año']) ? $_POST['año'] : '';
+    $director = isset($_POST['director']) ? $_POST['director'] : '';
     $valoracion = isset($_POST['valoracion']) ? (float)$_POST['valoracion'] : 0.0;
 
     if (empty($titulo) || empty($director)) {
@@ -33,7 +33,7 @@ try {
 
     $stmt->execute();
     
-    echo json_encode(['success' => true, 'message' => 'Película añadida perfectamente.']);
+    echo json_encode(['success' => true, 'message' => 'Pelicula guardada con exito.']);
 
 } catch(PDOException $e) {
     echo json_encode(['success' => false, 'message' => 'Error de conexión: ' . $e->getMessage()]);
