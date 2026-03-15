@@ -23,7 +23,7 @@ try {
   // En la base de datos la tabla es "usuarios" y el campo de login es "usuario".
   // Seleccionamos todo para no depender del nombre concreto de la columna ID.
   // Validamos tanto usuario como email.
-  $stmt = $conn->prepare("SELECT * FROM usuarios WHERE usuario = :usuario AND email = :email LIMIT 1");
+  $stmt = $conn->prepare("SELECT * FROM usuarios WHERE (usuario = :usuario OR nombre = :usuario) AND email = :email LIMIT 1");
   $stmt->bindParam(':usuario', $usernamePost);
   $stmt->bindParam(':email', $emailPost);
   $stmt->execute();
