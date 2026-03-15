@@ -1,226 +1,180 @@
-// --- MANEJO DE FAVORITOS Y VISTAS (LocalStorage) ---
-// Aqui guardamos las peliculas para que se queden grabadas en el navegador del usuario.
-// He usado nombres de claves un poco largos para que no choquen con otras webs.
+// Gestión de favoritos en localStorage y render de tarjetas
 
-var CLAVE_FAVORITOS = "filmoraFavorites";
-var CLAVE_VISTAS = "filmoraSeen";
+const FAVORITES_KEY = "filmoraFavorites";
 
-// Sacamos los favoritos del navegador. Si no hay nada, devolvemos un array vacio [].
-function obtenerFavoritos() {
+function getFavorites() {
   try {
-    var datos = localStorage.getItem(CLAVE_FAVORITOS);
-    if (datos) {
-      return JSON.parse(datos);
-    } else {
-      return [];
-    }
-  } catch (e) {
-    // Si falla el parseo o algo, mejor devolver vacio para que no explote la web
+    const raw = localStorage.getItem(FAVORITES_KEY);
+    return raw ? JSON.parse(raw) : [];
+  } catch {
     return [];
   }
 }
 
-// Guardamos la lista convirtiendola a texto (JSON)
-function guardarFavoritos(lista) {
-  localStorage.setItem(CLAVE_FAVORITOS, JSON.stringify(lista));
+function saveFavorites(favs) {
+  localStorage.setItem(FAVORITES_KEY, JSON.stringify(favs));
 }
 
-// Lo mismo para las pelis que ya hemos visto
-function obtenerVistas() {
+const SEEN_KEY = "filmoraSeen";
+
+function getSeen() {
   try {
-    var datos = localStorage.getItem(CLAVE_VISTAS);
-    if (datos) {
-      return JSON.parse(datos);
-    } else {
-      return [];
-    }
-  } catch (e) {
+    const raw = localStorage.getItem(SEEN_KEY);
+    return raw ? JSON.parse(raw) : [];
+  } catch {
     return [];
   }
 }
 
-function guardarVistas(lista) {
-  localStorage.setItem(CLAVE_VISTAS, JSON.stringify(lista));
+function saveSeen(seen) {
+  localStorage.setItem(SEEN_KEY, JSON.stringify(seen));
 }
 
-// Para saber rapido si una peli ya esta marcada como vista por su ID
-function esVista(id) {
-  var vistas = obtenerVistas();
-  for (var i = 0; i < vistas.length; i++) {
-    if (vistas[i].id === id) {
-      return true;
-    }
-  }
-  return false;
+function isSeen(id) {
+  return getSeen().some((f) => f.id === id);
 }
 
-// Esta funcion añade la peli si no esta, o la quita si ya la habiamos visto
-function cambiarVista(peli) {
-  var vistas = obtenerVistas();
-  var indice = -1;
-  
-  // Buscamos la peli en nuestra lista
-  for (var i = 0; i < vistas.length; i++) {
-    if (vistas[i].id === peli.id) {
-      indice = i;
-      break;
-    }
-  }
+function toggleSeen(movie) {
+  const seen = getSeen();
+  const existingIndex = seen.findIndex((f) => f.id === movie.id);
+  let nowSeen = false;
 
-  if (indice >= 0) {
-    vistas.splice(indice, 1); // La quitamos
+  if (existingIndex >= 0) {
+    seen.splice(existingIndex, 1);
+    nowSeen = false;
   } else {
-    vistas.push(peli); // La añadimos
+    seen.push(movie);
+    nowSeen = true;
   }
-  guardarVistas(vistas);
+  saveSeen(seen);
 
-  // Tambien le avisamos al servidor por si acaso para que lo guarde en la cuenta
-  var datosForm = new FormData();
-  datosForm.append('title', peli.title);
-  datosForm.append('genero', peli.genre || 'Desconocido');
-  datosForm.append('director', peli.director || 'Desconocido');
-  datosForm.append('duracion', peli.duration || 0);
-  datosForm.append('descripcion', peli.description || 'Sin descripción');
-  datosForm.append('valoracion', peli.rating || 0);
-  datosForm.append('año', peli.formattedDate || (peli.release_date + '-01-01'));
+  // Sincronizar con la BD (tabla vistas)
+  const formData = new FormData();
+  formData.append('title', movie.title);
+  formData.append('genero', movie.genre || 'Desconocido');
+  formData.append('director', movie.director || 'Desconocido');
+  formData.append('duracion', movie.duration || 0);
+  formData.append('descripcion', movie.description || 'Sin descripción');
+  formData.append('valoracion', movie.rating || 0);
+  formData.append('año', movie.formattedDate || (movie.release_date + '-01-01'));
 
-  // Usamos fetch para mandarlo al PHP
   fetch('../PHP/Peliculas/marcarVista.php', {
     method: 'POST',
-    body: datosForm,
-    credentials: 'include' // Esto es para que sepa que somos nosotros (la sesion)
-  })
-  .catch(function(error) {
-    console.warn('¡Uy! No he podido guardar la peli vista en el servidor.', error);
+    body: formData,
+    credentials: 'include'
+  }).catch(() => {
+    // Si falla la llamada, mantenemos localStorage pero podrías mostrar un aviso
+    console.warn('No se pudo actualizar la película vista en la base de datos.');
   });
 }
 
-// Comprobamos si es favorita
-function esFavorita(id) {
-  var favs = obtenerFavoritos();
-  for (var i = 0; i < favs.length; i++) {
-    if (favs[i].id === id) {
-      return true;
-    }
-  }
-  return false;
+function isFavorite(id) {
+  return getFavorites().some((f) => f.id === id);
 }
 
-// Lo mismo que cambiarVista pero para favoritas
-function cambiarFavorito(peli) {
-  var favs = obtenerFavoritos();
-  var indice = -1;
-  
-  for (var i = 0; i < favs.length; i++) {
-    if (favs[i].id === peli.id) {
-      indice = i;
-      break;
-    }
-  }
+function toggleFavorite(movie) {
+  const favs = getFavorites();
+  const existingIndex = favs.findIndex((f) => f.id === movie.id);
+  let nowFav = false;
 
-  if (indice >= 0) {
-    favs.splice(indice, 1);
+  if (existingIndex >= 0) {
+    favs.splice(existingIndex, 1);
+    nowFav = false;
   } else {
-    favs.push(peli);
+    favs.push(movie);
+    nowFav = true;
   }
-  guardarFavoritos(favs);
+  saveFavorites(favs);
 
-  // Mandamos los datos al servidor. Aqui tambien pasamos el año formateado.
-  var datosForm = new FormData();
-  datosForm.append('title', peli.title);
-  datosForm.append('genero', peli.genre || 'Desconocido');
-  datosForm.append('director', peli.director || 'Desconocido');
-  datosForm.append('duracion', peli.duration || 0);
-  datosForm.append('descripcion', peli.description || 'Sin descripción');
-  datosForm.append('valoracion', peli.rating || 0);
-  datosForm.append('año', peli.formattedDate || (peli.release_date + '-01-01'));
+  // Sincronizar con la BD (tabla favoritas)
+  const formData = new FormData();
+  formData.append('title', movie.title);
+  formData.append('genero', movie.genre || 'Desconocido');
+  formData.append('director', movie.director || 'Desconocido');
+  formData.append('duracion', movie.duration || 0);
+  formData.append('descripcion', movie.description || 'Sin descripción');
+  formData.append('valoracion', movie.rating || 0);
+  formData.append('año', movie.formattedDate || (movie.release_date + '-01-01'));
 
   fetch('../PHP/Peliculas/marcarFavorita.php', {
     method: 'POST',
-    body: datosForm,
+    body: formData,
     credentials: 'include'
-  })
-  .catch(function() {
-    console.warn('Ha fallado el guardado de favoritos en la base de datos.');
+  }).catch(() => {
+    console.warn('No se pudo actualizar favoritos en la base de datos.');
   });
 }
 
-// --- CREACION DE LAS TARJETAS DE PELICULAS ---
-// Esta funcion es la que genera todo el cuadradito con la imagen y el titulo
-function createMovieCard(peli, mostrarFavs, mostrarVistas, mostrarBorrar) {
-  // Creamos el elemento "article" que sera el contenedor principal
-  var card = document.createElement("article");
+function createMovieCard(movie, showFavs, showSeen, showEdit) {
+  const card = document.createElement("article");
   card.className = "pelicula-card";
 
-  // Pillamos la imagen. Si no hay, podriamos poner un icono de claqueta
-  var urlImagen = peli.image || peli.movie_banner || "";
-  var favorita = esFavorita(peli.id);
-  var vista = esVista(peli.id);
+  const posterUrl = movie.image || movie.movie_banner || "";
+  const favorite = isFavorite(movie.id);
+  const seen = isSeen(movie.id);
 
-  // Montamos los botones de los iconos (estrella y visto)
-  var botonesExtra = "";
-  if (mostrarFavs !== false) {
-    var claseFav = favorita ? "active" : "";
-    botonesExtra += '<button type="button" class="btn-fav ' + claseFav + '" title="Añadir a favoritas"><span class="icon">★</span></button>';
+  let extraButtons = "";
+  if (showFavs !== false) {
+    extraButtons += `
+      <button type="button" class="btn-fav ${favorite ? "active" : ""}" aria-pressed="${favorite}">
+        <span class="icon">★</span>
+      </button>
+    `;
   }
   
-  if (mostrarVistas !== false) {
-    var claseVista = vista ? "active" : "";
-    botonesExtra += '<button type="button" class="btn-seen ' + claseVista + '" title="Marcar como vista"><span class="icon">V</span></button>';
+  if (showSeen !== false) {
+    extraButtons += `
+      <button type="button" class="btn-seen ${seen ? "active" : ""}" aria-pressed="${seen}">
+        <span class="icon">V</span>
+      </button>
+    `;
   }
 
-  // Si hay imagen, la ponemos de fondo del poster
-  var estiloPoster = urlImagen ? 'style="background-image:url(' + urlImagen + ');background-size:cover;background-position:center;"' : "";
-  
-  // Aqui montamos todo el HTML de dentro
-  card.innerHTML = 
-    '<div class="poster" ' + estiloPoster + '>' +
-      (!urlImagen ? "🎬" : "") +
-      botonesExtra +
-    '</div>' +
-    '<div class="pelicula-body">' +
-      '<h3>' + peli.title + '</h3>' +
-      '<p>' + (peli.release_date || "") + (peli.director ? " · " + peli.director : "") + '</p>' +
-    '</div>';
+  card.innerHTML = `
+    <div class="poster" style="${posterUrl ? `background-image:url('${posterUrl}');background-size:cover;background-position:center;` : ""}">
+      ${!posterUrl ? "🎬" : ""}
+      ${extraButtons}
+    </div>
+    <div class="pelicula-body">
+      <h3>${movie.title}</h3>
+      <p>${movie.release_date || ""} ${movie.director ? "· " + movie.director : ""}</p>
+    </div>
+  `;
 
-  // Si nos piden el boton de borrar (en la lista de edicion)
-  if (mostrarBorrar === true) {
-     var divEdicion = document.createElement("div");
-     divEdicion.className = "edit-controls";
-     divEdicion.style.display = "none";
-     divEdicion.innerHTML = '<button type="button" class="btn-delete">Quitar de mi lista</button>';
-     card.appendChild(divEdicion);
+  if (showEdit === true) {
+     const editContainer = document.createElement("div");
+     editContainer.className = "edit-controls";
+     editContainer.style.display = "none";
+     editContainer.innerHTML = `<button class="btn-delete">Quitar de mi lista</button>`;
+     card.appendChild(editContainer);
 
-     var btnBorrar = divEdicion.querySelector(".btn-delete");
-     btnBorrar.addEventListener("click", function() {
-         // Si borra, lo quitamos de favoritos y de la pantalla
-         cambiarFavorito(peli);
-         card.remove(); 
-         // Si la lista se queda vacia enseñamos el mensaje de "No hay nada"
+     const btnDelete = editContainer.querySelector(".btn-delete");
+     btnDelete.addEventListener("click", () => {
+         toggleFavorite(movie);
+         card.remove(); // Elimina elemento del DOM
          if (document.querySelectorAll('#listaFavoritas .pelicula-card').length === 0) {
-             var vacia = document.getElementById("listaVacia");
+             const vacia = document.getElementById("listaVacia");
              if (vacia) vacia.style.display = "block";
          }
      });
   }
 
-  // Ponemos el click al boton de favoritos
-  if (mostrarFavs !== false) {
-    var btn = card.querySelector(".btn-fav");
-    btn.addEventListener("click", function(e) {
-      e.stopPropagation(); // que no se abra la peli (si pusieramos enlace)
-      cambiarFavorito(peli);
+  if (showFavs !== false) {
+    const btn = card.querySelector(".btn-fav");
+    btn.addEventListener("click", () => {
+      toggleFavorite(movie);
       btn.classList.toggle("active");
+      btn.setAttribute("aria-pressed", btn.classList.contains("active"));
     });
   }
 
-  // Y al boton de pelis vistas
-  if (mostrarVistas !== false) {
-    var btnVista = card.querySelector(".btn-seen");
-    btnVista.addEventListener("click", function(e) {
-      e.stopPropagation();
-      cambiarVista(peli);
-      btnVista.classList.toggle("active");
+  if (showSeen !== false) {
+    const btnSeen = card.querySelector(".btn-seen");
+    btnSeen.addEventListener("click", () => {
+      toggleSeen(movie);
+      btnSeen.classList.toggle("active");
+      btnSeen.style.color = btnSeen.classList.contains("active") ? "#4caf50" : "#fff";
+      btnSeen.setAttribute("aria-pressed", btnSeen.classList.contains("active"));
     });
   }
 

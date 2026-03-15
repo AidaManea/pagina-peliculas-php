@@ -126,27 +126,24 @@
     <script src="favoritos.js"></script>
     <script src="api.js"></script>
     <script>
-        document.addEventListener("DOMContentLoaded", function() {
-            var contenedor = document.getElementById("chipsFavoritas");
+        document.addEventListener("DOMContentLoaded", () => {
+            const contenedor = document.getElementById("chipsFavoritas");
             if (!contenedor) return;
 
-            var favoritos = obtenerFavoritos();
-            // cogemos solo las 10 primeras
-            var favoritosTop = favoritos.slice(0, 10);
+            const favoritos = getFavorites().slice(0, 10);
             contenedor.innerHTML = "";
 
-            if (favoritosTop.length === 0) {
+            if (!favoritos.length) {
                 contenedor.innerHTML = "<span class='lista-chip'>Todavía no tienes favoritas. ¡Marca alguna ★ arriba!</span>";
                 return;
             }
 
-            for (var i = 0; i < favoritosTop.length; i++) {
-                var peli = favoritosTop[i];
-                var chip = document.createElement("span");
+            favoritos.forEach((movie) => {
+                const chip = document.createElement("span");
                 chip.className = "lista-chip";
-                chip.textContent = peli.title;
+                chip.textContent = movie.title;
                 contenedor.appendChild(chip);
-            }
+            });
         });
     </script>
 </body>
