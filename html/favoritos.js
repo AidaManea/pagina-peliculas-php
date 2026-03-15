@@ -56,7 +56,8 @@ function toggleSeen(movie) {
   formData.append('duracion', movie.duration || 0);
   formData.append('descripcion', movie.description || 'Sin descripción');
   formData.append('valoracion', movie.rating || 0);
-  formData.append('año', movie.formattedDate || (movie.release_date + '-01-01'));
+  formData.append('año', movie.formattedDate || (movie.release_date ? movie.release_date + '-01-01' : '0000-00-00'));
+  formData.append('imagen', movie.image || '');
 
   fetch('../PHP/Peliculas/marcarVista.php', {
     method: 'POST',
@@ -94,7 +95,8 @@ function toggleFavorite(movie) {
   formData.append('duracion', movie.duration || 0);
   formData.append('descripcion', movie.description || 'Sin descripción');
   formData.append('valoracion', movie.rating || 0);
-  formData.append('año', movie.formattedDate || (movie.release_date + '-01-01'));
+  formData.append('año', movie.formattedDate || (movie.release_date ? movie.release_date + '-01-01' : '0000-00-00'));
+  formData.append('imagen', movie.image || '');
 
   fetch('../PHP/Peliculas/marcarFavorita.php', {
     method: 'POST',
@@ -109,7 +111,12 @@ function createMovieCard(movie, showFavs, showSeen, showEdit) {
   const card = document.createElement("article");
   card.className = "pelicula-card";
 
-  const posterUrl = movie.image || movie.movie_banner || "";
+  // Safely extract the image URL, discarding literal 'null' strings or missing values.
+  let posterUrl = movie.image || movie.imagen || movie.Poster || movie.poster || movie.url_imagen || movie.movie_banner || "";
+  if (posterUrl === "null" || posterUrl === "undefined" || posterUrl.trim() === "") {
+      posterUrl = "";
+  }
+  
   const favorite = isFavorite(movie.id);
   const seen = isSeen(movie.id);
 

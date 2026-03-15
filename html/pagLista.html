@@ -130,7 +130,7 @@
             });
 
             // Lógica para el buscador OMDB
-            const OMDB_API_KEY = "b5ae98fe";
+            const OMDB_API_KEY = "a3638a31";
             const searchBtn = document.getElementById("omdbSearchBtn");
             const searchInput = document.getElementById("omdbSearchInput");
             const searchResult = document.getElementById("omdbSearchResult");
@@ -189,6 +189,7 @@
                               formData.append('año', anioFormat);
                               formData.append('director', data.Director || 'Desconocido');
                               formData.append('valoracion', parseFloat(data.imdbRating) || 0);
+                              formData.append('imagen', data.Poster !== "N/A" ? data.Poster : "");
 
                               fetch('../PHP/Peliculas/apiGuardarPelicula.php', {
                                   method: 'POST',

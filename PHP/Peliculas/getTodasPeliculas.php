@@ -6,7 +6,7 @@ try {
     $conn = new PDO("mysql:host=$servername;dbname=$dbname", $username, $password);
     $conn->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION);
 
-    $stmt = $conn->query("SELECT idpelicula, titulo, genero, director, duracion, descripcion, valoracion, año FROM pelis ORDER BY idpelicula DESC");
+    $stmt = $conn->query("SELECT idpelicula, titulo, genero, director, duracion, descripcion, valoracion, año, imagen FROM pelis ORDER BY idpelicula DESC");
     $peliculas = $stmt->fetchAll(PDO::FETCH_ASSOC);
 
     echo json_encode(['success' => true, 'data' => $peliculas]);

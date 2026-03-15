@@ -1,4 +1,4 @@
-const OMDB_API_KEY = "b5ae98fe";
+const OMDB_API_KEY = "a3638a31";
 let todasLasPeliculas = [];
 
 function filtrarPorAnio(lista, filtro) {
@@ -160,6 +160,7 @@ document.addEventListener("DOMContentLoaded", () => {
           formData.append('año', movie.formattedDate);
           formData.append('director', movie.director);
           formData.append('valoracion', movie.rating);
+          formData.append('imagen', movie.image);
 
           fetch('../PHP/Peliculas/apiGuardarPelicula.php', { method: 'POST', body: formData }).catch(e => console.error(e));
           return movie;

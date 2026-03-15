@@ -11,6 +11,7 @@ $duracion = (int)($_POST['duracion'] ?? 0);
 $descripcion = $_POST['descripcion'] ?? 'Sin descripción';
 $valoracion = (float)($_POST['valoracion'] ?? 0);
 $anio = $_POST['año'] ?? date('Y-m-d');
+$imagen = $_POST['imagen'] ?? '';
 
 if ($title === '') {
     echo json_encode(['success' => false, 'message' => 'Título de película incompleto.']);
@@ -34,7 +35,7 @@ try {
 
         echo json_encode(['success' => true, 'seen' => false, 'message' => 'Película quitada de tu lista de vistas.']);
     } else {
-        $ins = $conn->prepare("INSERT INTO vistas (titulo, genero, director, duracion, descripcion, valoracion, año) VALUES (:titulo, :genero, :director, :duracion, :descripcion, :valoracion, :anio)");
+        $ins = $conn->prepare("INSERT INTO vistas (titulo, genero, director, duracion, descripcion, valoracion, año, imagen) VALUES (:titulo, :genero, :director, :duracion, :descripcion, :valoracion, :anio, :imagen)");
         $ins->bindParam(':titulo', $title);
         $ins->bindParam(':genero', $genero);
         $ins->bindParam(':director', $director);
@@ -42,6 +43,7 @@ try {
         $ins->bindParam(':descripcion', $descripcion);
         $ins->bindParam(':valoracion', $valoracion);
         $ins->bindParam(':anio', $anio);
+        $ins->bindParam(':imagen', $imagen);
         $ins->execute();
 
         echo json_encode(['success' => true, 'seen' => true, 'message' => 'Película marcada como vista.']);

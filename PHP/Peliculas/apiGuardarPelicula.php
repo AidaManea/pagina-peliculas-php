@@ -13,7 +13,7 @@ try {
   $anio = isset($_POST['año']) ? $_POST['año'] : date('Y-m-d');
   
   $director = isset($_POST['director']) ? $_POST['director'] : 'Desconocido';
-  $valoracion = isset($_POST['valoracion']) ? (float)$_POST['valoracion'] : 0;
+  $imagen = isset($_POST['imagen']) ? $_POST['imagen'] : '';
 
   if ($titulo !== '') {
       // Comprobar si ya existe una pelicula con ese titulo (opcional, para no duplicar)
@@ -22,7 +22,7 @@ try {
       $check->execute();
       
       if ($check->rowCount() == 0) {
-          $stmt = $conn->prepare("INSERT INTO `pelis` (`titulo`, `genero`, `director`, `duracion`, `descripcion`, `valoracion`, `año`) VALUES (:titulo, :genero, :director, :duracion, :descripcion, :valoracion, :anio)");
+          $stmt = $conn->prepare("INSERT INTO `pelis` (`titulo`, `genero`, `director`, `duracion`, `descripcion`, `valoracion`, `año`, `imagen`) VALUES (:titulo, :genero, :director, :duracion, :descripcion, :valoracion, :anio, :imagen)");
           $stmt->bindParam(':titulo', $titulo);
           $stmt->bindParam(':genero', $genero);
           $stmt->bindParam(':director', $director);
@@ -30,6 +30,7 @@ try {
           $stmt->bindParam(':descripcion', $descripcion);
           $stmt->bindParam(':valoracion', $valoracion);
           $stmt->bindParam(':anio', $anio);
+          $stmt->bindParam(':imagen', $imagen);
 
           $stmt->execute();
           echo "Película insertada correctamente";
