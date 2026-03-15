@@ -1,15 +1,29 @@
+/**
+ * Muestra un mensaje de error en el elemento DOM especificado.
+ * @param {HTMLElement} element - El elemento donde se mostrará el error.
+ * @param {string} message - El mensaje de error a mostrar.
+ */
 function showError(element, message) {
   if (!element) return;
   element.textContent = message;
   element.style.display = "block";
 }
 
+/**
+ * Limpia y oculta los mensajes de error de un elemento DOM.
+ * @param {HTMLElement} element - El elemento a limpiar.
+ */
 function clearError(element) {
   if (!element) return;
   element.textContent = "";
   element.style.display = "none";
 }
 
+/**
+ * Verifica si un valor de entrada está vacío o contiene solo espacios.
+ * @param {string} value - El texto a evaluar.
+ * @returns {boolean} True si está vacío, false en caso contrario.
+ */
 function isEmpty(value) {
   return !value || value.trim().length === 0;
 }

@@ -90,6 +90,13 @@
     <script src="favoritos.js"></script>
     <script>
         document.addEventListener("DOMContentLoaded", () => {
+            fetch("../PHP/getPerfilDatos.php", { method: "GET", credentials: "include" })
+                .then(res => res.json())
+                .then(data => {
+                    if (!data.success) {
+                        window.location.href = "login.html";
+                        return;
+                    }
             const contenedor = document.getElementById("listaFavoritas");
             const vacia = document.getElementById("listaVacia");
             if (!contenedor) return;
@@ -149,7 +156,12 @@
                               release_date: data.Year,
                               director: data.Director || "",
                               image: data.Poster !== "N/A" ? data.Poster : "",
-                              movie_banner: ""
+                              movie_banner: "",
+                              genre: data.Genre || "Desconocido",
+                              duration: parseInt((data.Runtime || "").replace(" min", "")) || 0,
+                              description: data.Plot || "Sin descripción",
+                              rating: parseFloat(data.imdbRating) || 0,
+                              formattedDate: data.Released && data.Released !== "N/A" ? new Date(data.Released).toISOString().split('T')[0] : (data.Year + "-01-01")
                           };
 
                           // Añadir local si no está
@@ -171,12 +183,12 @@
                               const formData = new FormData();
                               formData.append('titulo', data.Title);
                               formData.append('genero', data.Genre || 'Desconocido');
-                              formData.append('duracion', data.Runtime || '0 min');
+                              formData.append('duracion', parseInt((data.Runtime || "").replace(" min", "")) || 0);
                               formData.append('descripcion', data.Plot || 'Sin descripción');
                               let anioFormat = data.Released && data.Released !== "N/A" ? new Date(data.Released).toISOString().split('T')[0] : (data.Year + "-01-01");
                               formData.append('año', anioFormat);
-                              formData.append('estrellas', data.Actors || 'Desconocidos');
                               formData.append('director', data.Director || 'Desconocido');
+                              formData.append('valoracion', parseFloat(data.imdbRating) || 0);
 
                               fetch('../PHP/Peliculas/apiGuardarPelicula.php', {
                                   method: 'POST',
@@ -204,6 +216,7 @@
                       searchResult.className = "search-result search-result--error";
                   });
             });
+            }); // Cierre del fetch inicial
         });
     </script>
 </body>

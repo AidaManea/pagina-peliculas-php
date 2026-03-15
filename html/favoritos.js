@@ -50,10 +50,13 @@ function toggleSeen(movie) {
 
   // Sincronizar con la BD (tabla vistas)
   const formData = new FormData();
-  formData.append('movieId', movie.id);
   formData.append('title', movie.title);
-  formData.append('year', movie.release_date || '');
-  formData.append('director', movie.director || '');
+  formData.append('genero', movie.genre || 'Desconocido');
+  formData.append('director', movie.director || 'Desconocido');
+  formData.append('duracion', movie.duration || 0);
+  formData.append('descripcion', movie.description || 'Sin descripción');
+  formData.append('valoracion', movie.rating || 0);
+  formData.append('año', movie.formattedDate || (movie.release_date + '-01-01'));
 
   fetch('../PHP/Peliculas/marcarVista.php', {
     method: 'POST',
@@ -85,10 +88,13 @@ function toggleFavorite(movie) {
 
   // Sincronizar con la BD (tabla favoritas)
   const formData = new FormData();
-  formData.append('movieId', movie.id);
   formData.append('title', movie.title);
-  formData.append('year', movie.release_date || '');
-  formData.append('director', movie.director || '');
+  formData.append('genero', movie.genre || 'Desconocido');
+  formData.append('director', movie.director || 'Desconocido');
+  formData.append('duracion', movie.duration || 0);
+  formData.append('descripcion', movie.description || 'Sin descripción');
+  formData.append('valoracion', movie.rating || 0);
+  formData.append('año', movie.formattedDate || (movie.release_date + '-01-01'));
 
   fetch('../PHP/Peliculas/marcarFavorita.php', {
     method: 'POST',

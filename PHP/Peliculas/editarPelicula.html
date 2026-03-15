@@ -1,62 +1,193 @@
 <!DOCTYPE html>
 <html lang="es">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Editar Película</title>
-    <!-- Mismo estilo básico que crearpelicula.html o un poco mejor -->
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>Editar Película - Filmora</title>
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <style>
+        body { font-family: 'Poppins', sans-serif; background-color: #f8f9fa; }
+        .navbar { background-color: #1a1a1a; padding: 15px 20px; }
+        .navbar-brand { color: #e50914; font-weight: 700; font-size: 1.5rem; text-decoration: none; }
+        .navbar-brand:hover { color: #ff0a16; }
+        .crud-container { max-width: 800px; margin: 50px auto; background: #fff; padding: 30px; border-radius: 10px; box-shadow: 0 4px 6px rgba(0,0,0,0.1); }
+        h1 { font-weight: 700; margin-bottom: 20px; }
+        .form-label { font-weight: 600; }
+        .star-radio-group { display: flex; gap: 15px; }
+    </style>
 </head>
-<body style="font-family: Arial, sans-serif; padding: 20px; text-align: center;">
-    <h1 id="tituloPagina">Editar Película</h1>
-    <form action="editarPelicula.php" method="post" style="display: inline-block; text-align: left; background: #f9f9f9; padding: 20px; border-radius: 8px;">
-        <input type="hidden" name="id" id="movieId">
-
-        <label style="display:block; margin-top:10px;">Título</label>
-        <input type="text" name="titulo" id="titulo" required style="width: 100%; padding: 5px;">
-
-        <label style="display:block; margin-top:10px;">Género</label>
-        <select name="genero" style="width: 100%; padding: 5px;">
-            <option>Accion</option>
-            <option>Comedia</option>
-            <option>Drama</option>
-            <option>Terror</option>
-            <option>Ciencia ficción</option>
-        </select>
-
-        <label style="display:block; margin-top:10px;">Duración (ej. 120 min)</label>
-        <input type="text" name="duracion" id="duracion" style="width: 100%; padding: 5px;">
-
-        <label style="display:block; margin-top:10px;">Descripción</label>
-        <textarea name="descripcion" id="descripcion" style="width: 100%; padding: 5px;"></textarea>
-
-        <label style="display:block; margin-top:10px;">Año</label>
-        <input type="date" name="año" id="año" style="width: 100%; padding: 5px;">
-
-        <label style="display:block; margin-top:10px;">Estrellas (Actores)</label>
-        <input type="text" name="estrellas" id="estrellas" style="width: 100%; padding: 5px;">
-
-        <label style="display:block; margin-top:10px;">Director</label>
-        <input type="text" name="director" id="director" style="width: 100%; padding: 5px;">
-
-        <div style="margin-top: 20px; text-align: center;">
-            <input type="submit" value="Guardar Cambios" style="padding: 10px 20px; background: #4caf50; color: white; border: none; cursor: pointer; border-radius: 5px;">
-            <a href="../../html/pagLista.html" style="margin-left: 10px; color: #f44336; text-decoration: none;">Cancelar</a>
+<body>
+    <nav class="navbar">
+        <div class="container-fluid">
+            <a class="navbar-brand" href="../../html/index.html">Filmora CRUD</a>
+            <div class="d-flex">
+                <a href="gestionarPeliculas.html" class="btn btn-outline-light me-2">Gestionar Películas</a>
+                <a href="../../html/pagLista.html" class="btn btn-light">Volver a Mi Lista</a>
+            </div>
         </div>
-    </form>
+    </nav>
+
+    <div class="container crud-container">
+        <h1 id="tituloPagina">Editar Película</h1>
+        <div id="errorBox" class="alert alert-danger" style="display: none;"></div>
+        <div id="successBox" class="alert alert-success" style="display: none;"></div>
+
+        <form id="editMovieForm">
+            <input type="hidden" name="idpelicula" id="movieId">
+            
+            <div class="row mb-3">
+                <div class="col-md-6">
+                    <label for="titulo" class="form-label">Título</label>
+                    <input type="text" class="form-control" id="titulo" name="titulo">
+                </div>
+                <div class="col-md-6">
+                    <label for="director" class="form-label">Director</label>
+                    <input type="text" class="form-control" id="director" name="director">
+                </div>
+            </div>
+
+            <div class="row mb-3">
+                <div class="col-md-6">
+                    <label for="genero" class="form-label">Género</label>
+                    <select class="form-select" id="genero" name="genero">
+                        <option value="">Selecciona un género...</option>
+                        <option value="Acción">Acción</option>
+                        <option value="Aventura">Aventura</option>
+                        <option value="Comedia">Comedia</option>
+                        <option value="Drama">Drama</option>
+                        <option value="Terror">Terror</option>
+                        <option value="Ciencia Ficción">Ciencia Ficción</option>
+                        <option value="Fantasía">Fantasía</option>
+                    </select>
+                </div>
+                <div class="col-md-3">
+                    <label for="duracion" class="form-label">Duración (min)</label>
+                    <input type="number" class="form-control" id="duracion" name="duracion">
+                </div>
+                <div class="col-md-3">
+                    <label for="año" class="form-label">Fecha Estreno</label>
+                    <input type="date" class="form-control" id="año" name="año">
+                </div>
+            </div>
+
+            <div class="mb-3">
+                <label class="form-label">Valoración (Estrellas)</label>
+                <div class="star-radio-group">
+                    <div class="form-check">
+                        <input class="form-check-input" type="radio" name="valoracion" id="val1" value="1">
+                        <label class="form-check-label" for="val1">⭐</label>
+                    </div>
+                    <div class="form-check">
+                        <input class="form-check-input" type="radio" name="valoracion" id="val2" value="2">
+                        <label class="form-check-label" for="val2">⭐⭐</label>
+                    </div>
+                    <div class="form-check">
+                        <input class="form-check-input" type="radio" name="valoracion" id="val3" value="3">
+                        <label class="form-check-label" for="val3">⭐⭐⭐</label>
+                    </div>
+                    <div class="form-check">
+                        <input class="form-check-input" type="radio" name="valoracion" id="val4" value="4">
+                        <label class="form-check-label" for="val4">⭐⭐⭐⭐</label>
+                    </div>
+                    <div class="form-check">
+                        <input class="form-check-input" type="radio" name="valoracion" id="val5" value="5">
+                        <label class="form-check-label" for="val5">⭐⭐⭐⭐⭐</label>
+                    </div>
+                </div>
+            </div>
+
+            <div class="mb-3">
+                <label for="descripcion" class="form-label">Descripción / Sinopsis</label>
+                <textarea class="form-control" id="descripcion" name="descripcion" rows="4"></textarea>
+            </div>
+
+            <div class="text-end">
+                <button type="button" class="btn btn-secondary me-2" onclick="window.location.href='gestionarPeliculas.html'">Cancelar</button>
+                <button type="submit" class="btn btn-danger">Guardar Cambios</button>
+            </div>
+        </form>
+    </div>
 
     <script>
-        // Rellenar ID y Título desde la URL si existe
-        const params = new URLSearchParams(window.location.search);
-        const movieId = params.get('id');
-        const movieTitle = params.get('titulo');
+        document.addEventListener('DOMContentLoaded', () => {
+            const form = document.getElementById('editMovieForm');
+            const errorBox = document.getElementById('errorBox');
+            const successBox = document.getElementById('successBox');
 
-        if (movieId) {
-            document.getElementById('movieId').value = movieId;
-        }
-        if (movieTitle) {
-            document.getElementById('titulo').value = movieTitle;
-            document.getElementById('tituloPagina').innerText = "Editar: " + movieTitle;
-        }
+            // Cargar datos de la URL o sesión
+            const params = new URLSearchParams(window.location.search);
+            const movieId = params.get('id');
+            const movieTitle = params.get('titulo');
+
+            if (movieId) {
+                document.getElementById('movieId').value = movieId;
+                // Idealmente aquí se haría un fetch a getPelicula.php?id=... para cargar todos los datos.
+                // Simulamos cargar el título por ahora:
+                if (movieTitle) {
+                    document.getElementById('titulo').value = movieTitle;
+                    document.getElementById('tituloPagina').innerText = "Editar: " + movieTitle;
+                }
+            } else {
+                errorBox.textContent = "No se proporcionó un ID de película válido. Vuelve atrás.";
+                errorBox.style.display = 'block';
+                form.style.display = 'none';
+                return;
+            }
+
+            form.addEventListener('submit', (e) => {
+                e.preventDefault();
+                errorBox.style.display = 'none';
+                successBox.style.display = 'none';
+
+                // JS Validation
+                const titulo = document.getElementById('titulo').value.trim();
+                const director = document.getElementById('director').value.trim();
+                const genero = document.getElementById('genero').value;
+                const duracion = document.getElementById('duracion').value;
+                const ano = document.getElementById('año').value;
+                const descripcion = document.getElementById('descripcion').value.trim();
+                
+                const valoracion = document.querySelector('input[name="valoracion"]:checked');
+
+                if (!titulo || !director || !genero || !duracion || !ano || !descripcion || !valoracion) {
+                    errorBox.textContent = 'Por favor, rellena todos los campos antes de guardar.';
+                    errorBox.style.display = 'block';
+                    return;
+                }
+
+                if (parseInt(duracion) <= 0) {
+                    errorBox.textContent = 'La duración debe ser mayor a 0.';
+                    errorBox.style.display = 'block';
+                    return;
+                }
+
+                if (confirm(`¿Estás seguro que deseas actualizar la película '${titulo}'?`)) {
+                    const formData = new FormData(form);
+
+                    fetch('editarPelicula.php', {
+                        method: 'POST',
+                        body: formData
+                    })
+                    .then(res => res.json())
+                    .then(data => {
+                        if (data.success) {
+                            successBox.textContent = data.message || 'Película actualizada perfectamente.';
+                            successBox.style.display = 'block';
+                            setTimeout(() => { window.location.href = 'gestionarPeliculas.html'; }, 1500);
+                        } else {
+                            errorBox.textContent = data.message || 'Error al actualizar la película.';
+                            errorBox.style.display = 'block';
+                        }
+                    })
+                    .catch(err => {
+                        console.error(err);
+                        errorBox.textContent = 'Ocurrió un error de conexión con el servidor.';
+                        errorBox.style.display = 'block';
+                    });
+                }
+            });
+        });
     </script>
 </body>
 </html>

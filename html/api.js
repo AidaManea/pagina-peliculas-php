@@ -55,7 +55,25 @@ document.addEventListener("DOMContentLoaded", () => {
           director: film.Director || "",
           image: film.Poster !== "N/A" ? film.Poster : "",
           movie_banner: "",
+          // Extend fields properties for favoritism logic
+          genre: film.Genre || "Desconocido",
+          duration: parseInt((film.Runtime || "").replace(" min", "")) || 0,
+          description: film.Plot || "Sin descripción",
+          rating: parseFloat(film.imdbRating) || 0,
+          formattedDate: film.Released && film.Released !== "N/A" ? new Date(film.Released).toISOString().split('T')[0] : (film.Year + "-01-01")
         };
+
+        const formData = new FormData();
+        formData.append('titulo', movie.title);
+        formData.append('genero', movie.genre);
+        formData.append('duracion', movie.duration);
+        formData.append('descripcion', movie.description);
+        formData.append('año', movie.formattedDate);
+        formData.append('director', movie.director);
+        formData.append('valoracion', movie.rating);
+
+        fetch('../PHP/Peliculas/apiGuardarPelicula.php', { method: 'POST', body: formData }).catch(e => console.error(e));
+
         const card = createMovieCard(movie, { showFavoriteButton: true, showSeenButton: true });
         grid.appendChild(card);
       });

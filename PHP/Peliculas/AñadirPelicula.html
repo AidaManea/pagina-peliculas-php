@@ -1,38 +1,169 @@
 <!DOCTYPE html>
 <html lang="es">
-
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Añadir Pelicula</title>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>Añadir Película - Filmora</title>
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <style>
+        body { font-family: 'Poppins', sans-serif; background-color: #f8f9fa; }
+        .navbar { background-color: #1a1a1a; padding: 15px 20px; }
+        .navbar-brand { color: #e50914; font-weight: 700; font-size: 1.5rem; text-decoration: none; }
+        .navbar-brand:hover { color: #ff0a16; }
+        .crud-container { max-width: 800px; margin: 50px auto; background: #fff; padding: 30px; border-radius: 10px; box-shadow: 0 4px 6px rgba(0,0,0,0.1); }
+        h1 { font-weight: 700; margin-bottom: 20px; }
+        .form-label { font-weight: 600; }
+        .star-radio-group { display: flex; gap: 15px; }
+    </style>
 </head>
-
 <body>
-    <h1>Añadir Pelicula</h1>
-    <a href="/PHP/login.php"></a>
-    <form action="crearPelicula.php" method="post"></b>
-        Titulo<input type="text" name="Titulo" id="titulo"><br>
-        <select name="genero">
-            <option>Accion</option>
-            <option>Comedia</option>
-            <option>Drama</option>
-            <option>Terror</option>
-            <option>Accion</option>
-            <option>Ciencia ficción</option>
-        </select><br>
-        Duracion<input type="text" name="Duracion" id="duracion"><br>
-        Descripcion<input type="text" name="Descripcion" id="descripcion"><br>
-        Año<input type="date" name="Año" id="año"><br>
-        Estrellas<input type="text" name="Estrellas" id="estrellas"><br>
-        Director<input type="text" name="Director" id="director"><br>
-        Añadir Pelicula<input type="submit" value="Añadir jugador" id="añadir"><br>
-        <a href="/html/pagLista.html"></a>
-    </form>
+    <nav class="navbar">
+        <div class="container-fluid">
+            <a class="navbar-brand" href="../../html/index.html">Filmora CRUD</a>
+            <div class="d-flex">
+                <a href="gestionarPeliculas.html" class="btn btn-outline-light me-2">Gestionar Películas</a>
+                <a href="../../html/pagLista.html" class="btn btn-light">Volver a Mi Lista</a>
+            </div>
+        </div>
+    </nav>
+
+    <div class="container crud-container">
+        <h1>Añadir Nueva Película</h1>
+        <div id="errorBox" class="alert alert-danger" style="display: none;"></div>
+        <div id="successBox" class="alert alert-success" style="display: none;"></div>
+
+        <form id="addMovieForm">
+            <div class="row mb-3">
+                <div class="col-md-6">
+                    <label for="titulo" class="form-label">Título</label>
+                    <input type="text" class="form-control" id="titulo" name="titulo" placeholder="Ej: Avatar">
+                </div>
+                <div class="col-md-6">
+                    <label for="director" class="form-label">Director</label>
+                    <input type="text" class="form-control" id="director" name="director" placeholder="Ej: James Cameron">
+                </div>
+            </div>
+
+            <div class="row mb-3">
+                <div class="col-md-6">
+                    <label for="genero" class="form-label">Género</label>
+                    <select class="form-select" id="genero" name="genero">
+                        <option value="">Selecciona un género...</option>
+                        <option value="Acción">Acción</option>
+                        <option value="Aventura">Aventura</option>
+                        <option value="Comedia">Comedia</option>
+                        <option value="Drama">Drama</option>
+                        <option value="Terror">Terror</option>
+                        <option value="Ciencia Ficción">Ciencia Ficción</option>
+                        <option value="Fantasía">Fantasía</option>
+                    </select>
+                </div>
+                <div class="col-md-3">
+                    <label for="duracion" class="form-label">Duración (min)</label>
+                    <input type="number" class="form-control" id="duracion" name="duracion" placeholder="Ej: 162">
+                </div>
+                <div class="col-md-3">
+                    <label for="año" class="form-label">Fecha Estreno</label>
+                    <input type="date" class="form-control" id="año" name="año">
+                </div>
+            </div>
+
+            <div class="mb-3">
+                <label class="form-label">Valoración (Estrellas)</label>
+                <div class="star-radio-group">
+                    <div class="form-check">
+                        <input class="form-check-input" type="radio" name="valoracion" id="val1" value="1">
+                        <label class="form-check-label" for="val1">⭐</label>
+                    </div>
+                    <div class="form-check">
+                        <input class="form-check-input" type="radio" name="valoracion" id="val2" value="2">
+                        <label class="form-check-label" for="val2">⭐⭐</label>
+                    </div>
+                    <div class="form-check">
+                        <input class="form-check-input" type="radio" name="valoracion" id="val3" value="3">
+                        <label class="form-check-label" for="val3">⭐⭐⭐</label>
+                    </div>
+                    <div class="form-check">
+                        <input class="form-check-input" type="radio" name="valoracion" id="val4" value="4">
+                        <label class="form-check-label" for="val4">⭐⭐⭐⭐</label>
+                    </div>
+                    <div class="form-check">
+                        <input class="form-check-input" type="radio" name="valoracion" id="val5" value="5" checked>
+                        <label class="form-check-label" for="val5">⭐⭐⭐⭐⭐</label>
+                    </div>
+                </div>
+            </div>
+
+            <div class="mb-3">
+                <label for="descripcion" class="form-label">Descripción / Sinopsis</label>
+                <textarea class="form-control" id="descripcion" name="descripcion" rows="4" placeholder="Breve resumen de la película..."></textarea>
+            </div>
+
+            <div class="text-end">
+                <button type="button" class="btn btn-secondary me-2" onclick="window.history.back()">Cancelar</button>
+                <button type="submit" class="btn btn-danger">Guardar Película</button>
+            </div>
+        </form>
+    </div>
+
+    <script>
+        document.addEventListener('DOMContentLoaded', () => {
+            const form = document.getElementById('addMovieForm');
+            const errorBox = document.getElementById('errorBox');
+            const successBox = document.getElementById('successBox');
+
+            form.addEventListener('submit', (e) => {
+                e.preventDefault();
+                errorBox.style.display = 'none';
+                successBox.style.display = 'none';
+
+                // JS Validation
+                const titulo = document.getElementById('titulo').value.trim();
+                const director = document.getElementById('director').value.trim();
+                const genero = document.getElementById('genero').value;
+                const duracion = document.getElementById('duracion').value;
+                const ano = document.getElementById('año').value;
+                const descripcion = document.getElementById('descripcion').value.trim();
+
+                if (!titulo || !director || !genero || !duracion || !ano || !descripcion) {
+                    errorBox.textContent = 'Por favor, rellena todos los campos antes de guardar.';
+                    errorBox.style.display = 'block';
+                    return;
+                }
+
+                if (parseInt(duracion) <= 0) {
+                    errorBox.textContent = 'La duración debe ser mayor a 0.';
+                    errorBox.style.display = 'block';
+                    return;
+                }
+
+                if (confirm(`¿Estás seguro que deseas añadir la película '${titulo}'?`)) {
+                    const formData = new FormData(form);
+
+                    fetch('AñadirPelicula.php', {
+                        method: 'POST',
+                        body: formData
+                    })
+                    .then(res => res.json())
+                    .then(data => {
+                        if (data.success) {
+                            successBox.textContent = data.message || 'Película guardada perfectamente.';
+                            successBox.style.display = 'block';
+                            form.reset();
+                        } else {
+                            errorBox.textContent = data.message || 'Error al guardar la película.';
+                            errorBox.style.display = 'block';
+                        }
+                    })
+                    .catch(err => {
+                        console.error(err);
+                        errorBox.textContent = 'Ocurrió un error de conexión con el servidor.';
+                        errorBox.style.display = 'block';
+                    });
+                }
+            });
+        });
+    </script>
 </body>
-
-
-
-
-</body>
-
 </html>

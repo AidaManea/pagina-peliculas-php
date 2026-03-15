@@ -1,0 +1,125 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>Gestionar Películas - Filmora CRUD</title>
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <style>
+        body { font-family: 'Poppins', sans-serif; background-color: #f8f9fa; }
+        .navbar { background-color: #1a1a1a; padding: 15px 20px; }
+        .navbar-brand { color: #e50914; font-weight: 700; font-size: 1.5rem; text-decoration: none; }
+        .navbar-brand:hover { color: #ff0a16; }
+        .crud-container { max-width: 1000px; margin: 50px auto; background: #fff; padding: 30px; border-radius: 10px; box-shadow: 0 4px 6px rgba(0,0,0,0.1); }
+        h1 { font-weight: 700; margin-bottom: 20px; }
+        .table-custom th { background-color: #1a1a1a; color: #fff; }
+    </style>
+</head>
+<body>
+    <nav class="navbar">
+        <div class="container-fluid">
+            <a class="navbar-brand" href="../../html/index.html">Filmora CRUD</a>
+            <div class="d-flex">
+                <a href="AñadirPelicula.html" class="btn btn-outline-danger me-2">Añadir Nueva Película</a>
+                <a href="../../html/pagLista.html" class="btn btn-light">Salir al inicio</a>
+            </div>
+        </div>
+    </nav>
+
+    <div class="container crud-container">
+        <div class="d-flex justify-content-between align-items-center mb-4">
+            <h1>Lista de Películas</h1>
+        </div>
+        
+        <div id="msgBox" class="alert" style="display: none;"></div>
+
+        <div class="table-responsive">
+            <table class="table table-striped table-hover table-custom align-middle">
+                <thead>
+                    <tr>
+                        <th>ID</th>
+                        <th>Título</th>
+                        <th>Género</th>
+                        <th>Duración</th>
+                        <th>Año</th>
+                        <th>Director</th>
+                        <th>Acciones</th>
+                    </tr>
+                </thead>
+                <tbody id="listaPeliculas">
+                    <tr><td colspan="7" class="text-center">Cargando películas...</td></tr>
+                </tbody>
+            </table>
+        </div>
+    </div>
+
+    <script>
+        document.addEventListener('DOMContentLoaded', () => {
+            fetchLista();
+        });
+
+        function fetchLista() {
+            fetch('getTodasPeliculas.php')
+                .then(res => res.json())
+                .then(data => {
+                    const tbody = document.getElementById('listaPeliculas');
+                    tbody.innerHTML = '';
+                    
+                    if (!data.success || data.data.length === 0) {
+                        tbody.innerHTML = '<tr><td colspan="7" class="text-center">No hay películas registradas en la BBDD.</td></tr>';
+                        return;
+                    }
+
+                    data.data.forEach(p => {
+                        const tr = document.createElement('tr');
+                        tr.innerHTML = `
+                            <td>${p.idpelicula}</td>
+                            <td class="fw-semibold">${p.titulo}</td>
+                            <td>${p.genero}</td>
+                            <td>${p.duracion} min</td>
+                            <td>${p.año}</td>
+                            <td>${p.director}</td>
+                            <td>
+                                <a href="editarPelicula.html?id=${p.idpelicula}&titulo=${encodeURIComponent(p.titulo)}" class="btn btn-sm btn-primary">Editar</a>
+                                <button class="btn btn-sm btn-danger ms-1" onclick="eliminarPelicula(${p.idpelicula}, '${p.titulo.replace(/'/g, "\\'")}')">Eliminar</button>
+                            </td>
+                        `;
+                        tbody.appendChild(tr);
+                    });
+                })
+                .catch(err => {
+                    console.error(err);
+                    document.getElementById('listaPeliculas').innerHTML = '<tr><td colspan="7" class="text-center text-danger">Error al cargar datos del servidor.</td></tr>';
+                });
+        }
+
+        function eliminarPelicula(id, titulo) {
+            const msgBox = document.getElementById('msgBox');
+            msgBox.style.display = 'none';
+
+            if (confirm(`Alerta de seguridad: ¿Estás seguro que deseas ELIMINAR permanentemente la película '${titulo}'? Esta acción no se puede deshacer.`)) {
+                
+                fetch(`eliminarPelicula.php?id=${id}`, { method: 'GET' })
+                    .then(res => res.json())
+                    .then(data => {
+                        msgBox.style.display = 'block';
+                        if(data.success) {
+                            msgBox.className = 'alert alert-success';
+                            msgBox.textContent = `Película eliminada correctamente.`;
+                            fetchLista(); // Recargar la tabla
+                        } else {
+                            msgBox.className = 'alert alert-danger';
+                            msgBox.textContent = data.message || 'Error al eliminar.';
+                        }
+                    })
+                    .catch(err => {
+                        msgBox.style.display = 'block';
+                        msgBox.className = 'alert alert-danger';
+                        msgBox.textContent = 'Error de conexión.';
+                    });
+            }
+        }
+    </script>
+</body>
+</html>

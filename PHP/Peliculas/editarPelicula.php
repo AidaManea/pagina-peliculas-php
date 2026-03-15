@@ -1,31 +1,44 @@
 <?php
 require('../db.php');
+header('Content-Type: application/json; charset=utf-8');
 
 try {
-  $conn = new PDO("mysql:host=$servername;dbname=$dbname", $username, $password);
-  // set the PDO error mode to exception
-  $conn->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION);
+    $conn = new PDO("mysql:host=$servername;dbname=$dbname", $username, $password);
+    $conn->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION);
 
-  
-  //aquí empieza el insert 
-  $stmt = $conn->prepare("UPDATE `pelis` SET `titulo`=:titulo,`genero`= :genero,`duracion`=:duracion,`descripcion`=:descripcion,
-  `año`=:año,`estrellas`=:estrellas,`director`=:director WHERE `pelis`.`id` = :id");
-  $stmt->bindParam(':titulo', $_POST['titulo']);
-  $stmt->bindParam(':genero', $_POST['genero']);
-  $stmt->bindParam(':duracion', $_POST['duracion']);
-  $stmt->bindParam(':descripcion', $_POST['descripcion']);
-  $stmt->bindParam(':año', $_POST['año']);
-  $stmt->bindParam(':estrellas', $_POST['estrellas']);
-  $stmt->bindParam(':director', $_POST['director']);
-  $stmt->bindParam(':id', $_POST['id']);
-  // use exec() because no results are returned
-  $stmt->execute();
-  header("Location:/html/index.html");//lanzar un mensaje de confirmacion en javaSrcipt
+    $idpelicula = isset($_POST['idpelicula']) ? (int)$_POST['idpelicula'] : 0;
+    $titulo = $_POST['titulo'] ?? '';
+    $genero = $_POST['genero'] ?? '';
+    $duracion = isset($_POST['duracion']) ? (int)$_POST['duracion'] : 0;
+    $descripcion = $_POST['descripcion'] ?? '';
+    $ano = $_POST['año'] ?? '';
+    $director = $_POST['director'] ?? '';
+    $valoracion = isset($_POST['valoracion']) ? (float)$_POST['valoracion'] : 0.0;
 
+    if ($idpelicula <= 0 || empty($titulo) || empty($director)) {
+        echo json_encode(['success' => false, 'message' => 'Faltan datos obligatorios o el ID es inválido.']);
+        exit;
+    }
 
-echo "Conexión exitosa";
+    $stmt = $conn->prepare("UPDATE pelis 
+        SET titulo = :titulo, genero = :genero, duracion = :duracion, 
+            descripcion = :descripcion, año = :ano, valoracion = :valoracion, director = :director 
+        WHERE idpelicula = :idpelicula");
+        
+    $stmt->bindParam(':titulo', $titulo);
+    $stmt->bindParam(':genero', $genero);
+    $stmt->bindParam(':duracion', $duracion, PDO::PARAM_INT);
+    $stmt->bindParam(':descripcion', $descripcion);
+    $stmt->bindParam(':ano', $ano);
+    $stmt->bindParam(':valoracion', $valoracion);
+    $stmt->bindParam(':director', $director);
+    $stmt->bindParam(':idpelicula', $idpelicula, PDO::PARAM_INT);
+
+    $stmt->execute();
+    
+    echo json_encode(['success' => true, 'message' => 'Película actualizada perfectamente.']);
+
 } catch(PDOException $e) {
-  echo "Error de conexión: " . $e->getMessage();
+    echo json_encode(['success' => false, 'message' => 'Error de conexión: ' . $e->getMessage()]);
 }
-
 ?>
